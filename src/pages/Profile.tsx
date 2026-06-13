@@ -14,8 +14,8 @@ import {
   Settings,
   Shield,
   Sparkles,
-  Star,
-  UtensilsCrossed,
+ Star,
+ UtensilsCrossed,
   Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -46,6 +46,14 @@ const metricToneMap: Record<MetricTone, string> = {
   emerald: 'border-emerald-100 bg-emerald-50 text-emerald-700',
   amber: 'border-amber-100 bg-amber-50 text-amber-700',
   rose: 'border-rose-100 bg-rose-50 text-rose-700',
+}
+
+// 指标卡图标配色背景（与 tone 配套，提升视觉层级）
+const metricIconBgMap: Record<MetricTone, string> = {
+  brand: 'from-brand-500/12 to-brand-500/4 text-brand-600',
+  emerald: 'from-emerald-500/12 to-emerald-500/4 text-emerald-600',
+  amber: 'from-amber-500/12 to-amber-500/4 text-amber-600',
+  rose: 'from-rose-500/12 to-rose-500/4 text-rose-500',
 }
 
 function getInterestImageSrc(label: string, pois: Poi[]) {
@@ -146,8 +154,10 @@ function ProfileHeroCard({
 
   return (
     <section className="relative overflow-hidden rounded-card border border-slate-200 bg-white shadow-card">
-      <div className="relative h-36 overflow-hidden bg-gradient-to-r from-brand-700 via-brand-600 to-locate-500 sm:h-32">
+      <div className="relative h-36 overflow-hidden bg-gradient-to-r from-brand-700 via-brand-600 to-locate-600 sm:h-32">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:32px_32px]" />
+        <div className="pointer-events-none absolute -right-10 -top-16 h-44 w-44 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-6 left-1/3 h-24 w-64 rounded-full bg-locate-300/20 blur-2xl" aria-hidden="true" />
         <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-5 text-white sm:left-44 lg:left-52">
           <div className="min-w-0 max-w-2xl">
             <p className="text-xs font-semibold uppercase text-white/70">Traveler Command Center</p>
@@ -505,17 +515,18 @@ function HeroMetric({
   tone: MetricTone
 }) {
   return (
-    <div className="rounded-card border border-slate-200 bg-white p-3 shadow-sm shadow-slate-100/80">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xl font-semibold text-slate-950">{value}</p>
+    <div className="group relative overflow-hidden rounded-card border border-slate-200 bg-white p-3 shadow-sm shadow-slate-100/80 transition duration-soft hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-card-hover">
+      <span className={`pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br ${metricIconBgMap[tone]} opacity-0 blur-xl transition duration-soft group-hover:opacity-100`} aria-hidden="true" />
+      <div className="relative flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="truncate text-xl font-semibold leading-tight text-slate-950">{value}</p>
           <p className="mt-1 text-xs font-medium text-slate-500">{label}</p>
         </div>
-        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${metricToneMap[tone]}`}>
+        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${metricIconBgMap[tone]}`}>
           <Icon size={16} aria-hidden="true" />
         </span>
       </div>
-      <p className="mt-2 truncate text-xs text-slate-400">{detail}</p>
+      <p className="relative mt-2 truncate text-xs text-slate-400">{detail}</p>
     </div>
   )
 }

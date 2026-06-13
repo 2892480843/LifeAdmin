@@ -1,5 +1,6 @@
 {
   "name": "zhixing-luxian",
+  "description": "RouteWise / 智行路线 —— 面向旅行与城市出行的智能路线规划 Web 应用，整合目的地探索、POI 推荐、行程生成、地图查看与实时调整，基于高德地图与可配置 LLM（DeepSeek/LongCat）提供多套路线方案与字段级数据溯源。",
   "version": "1.0.0",
   "private": true,
   "type": "module",
