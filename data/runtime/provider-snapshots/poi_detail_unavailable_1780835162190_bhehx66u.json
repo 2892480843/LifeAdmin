@@ -1,0 +1,11 @@
+{
+  "rawSnapshotId": "poi_detail_unavailable_1780835162190_bhehx66u",
+  "sourceProvider": "unavailable",
+  "sourceEndpoint": "place/detail",
+  "sourceId": "B000A7BD6C",
+  "fetchedAt": "2026-06-07T12:26:02.189Z",
+  "expiresAt": "2026-06-07T12:26:02.189Z",
+  "stale": true,
+  "unavailableReason": "AMAP_WEB_SERVICE_KEY is not configured",
+  "storedAt": "2026-06-07T12:26:02.190Z"
+}

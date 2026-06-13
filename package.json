@@ -1,0 +1,41 @@
+{
+  "name": "zhixing-luxian",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:agent": "node server/agent-server.mjs",
+    "agent": "node server/agent-server.mjs",
+    "build": "tsc --noEmit && vite build",
+    "lint": "npm run typecheck && node --check server/agent-server.mjs && node --check server/data-layer.mjs && node --check scripts/check-env.mjs && node --check scripts/check-secrets.mjs && node --check scripts/smoke.mjs && node --check scripts/smoke-ports.mjs && node --check scripts/collect-city-pois.mjs && node --check scripts/collect-pois.mjs && node --check scripts/build-generated-pois.mjs && node --check scripts/validate-pois.mjs && node --check scripts/validate-production-data.mjs && node scripts/check-poi-images.mjs",
+    "preview": "vite preview",
+    "test": "node --test scripts/*.test.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "check:env": "node scripts/check-env.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:poi-images": "node scripts/check-poi-images.mjs",
+    "collect:pois": "node scripts/collect-city-pois.mjs",
+    "build:pois": "node scripts/build-generated-pois.mjs",
+    "validate:pois": "node scripts/validate-pois.mjs",
+    "validate:production-data": "node scripts/validate-production-data.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "lucide-react": "^0.456.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^8.0.16"
+  }
+}
