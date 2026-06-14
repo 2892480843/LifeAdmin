@@ -47,7 +47,7 @@ export default function MobileProfile() {
         {/* 偏好画像 */}
         <section className="mt-6">
           <SectionHeader title="偏好画像" to="/mobile/explore" />
-          <div className="mt-3 rounded-card border border-slate-200 bg-white p-4">
+          <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
             <div className="flex flex-wrap gap-2">
               {p.tags.slice(0, 6).map((tag, i) => (
                 <span key={tag} className={`chip rounded-full px-2.5 py-1 text-xs ${i < 2 ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'}`}>{tag}</span>
@@ -60,7 +60,7 @@ export default function MobileProfile() {
         {/* 兴趣偏好 */}
         <section className="mt-5">
           <SectionHeader title="兴趣偏好" to="/mobile/explore" />
-          <div className="mt-3 space-y-3 rounded-card border border-slate-200 bg-white p-4">
+          <div className="mt-3 space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
             {p.interests.slice(0, 5).map((item) => (
               <MiniBar key={item.label} label={item.label} value={item.weight} />
             ))}
@@ -70,12 +70,12 @@ export default function MobileProfile() {
         {/* 我的行程 */}
         <section className="mt-5">
           <SectionHeader title="我的行程" to="/mobile/trips" />
-          <div className="-mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+          <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
             {trips.length === 0 ? (
               <EmptyInline to="/new-trip" icon={Sparkles} label="还没有行程，去创建第一个" />
             ) : (
               trips.slice(0, 5).map((trip) => (
-                <Link key={trip.id} to={`/trip/${trip.id}`} className="card-interactive w-40 shrink-0 snap-start overflow-hidden rounded-card border border-slate-200 bg-white" aria-label={`查看行程：${trip.title}`}>
+                <Link key={trip.id} to={`/trip/${trip.id}`} className="touch-press card-interactive w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-200 bg-white" aria-label={`查看行程：${trip.title}`}>
                   <div className="relative h-20">
                     <SmartImage src={trip.cover} alt={trip.title} fallbackText={trip.title} className="absolute inset-0 h-full w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
@@ -96,7 +96,7 @@ export default function MobileProfile() {
         <section className="mt-5">
           <SectionHeader title="我的收藏" to="/mobile/explore" />
           {favPois.length === 0 ? (
-            <div className="mt-3 flex items-center gap-3 rounded-card border border-dashed border-slate-300 bg-slate-50/60 p-4">
+            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-risk-50 text-risk-500">
                 <Heart size={18} aria-hidden="true" />
               </span>
@@ -108,7 +108,7 @@ export default function MobileProfile() {
           ) : (
             <div className="mt-3 space-y-2">
               {favPois.slice(0, 4).map((poi) => (
-                <Link key={poi.id} to={`/poi/${poi.id}`} className="card-interactive flex items-center gap-3 rounded-card border border-slate-200 bg-white p-2.5" aria-label={`查看收藏：${poi.name}`}>
+                <Link key={poi.id} to={`/poi/${poi.id}`} className="touch-press card-interactive flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5" aria-label={`查看收藏：${poi.name}`}>
                   <SmartImage src={poi.cover} alt={poi.name} fallbackText={poi.name} className="h-12 w-12 shrink-0 rounded-lg" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-slate-800">{poi.name}</p>
@@ -126,9 +126,9 @@ export default function MobileProfile() {
         {/* 账户与设置 */}
         <section className="mt-5">
           <SectionHeader title="账户与设置" to="/settings" />
-          <div className="mt-3 divide-y divide-slate-100 overflow-hidden rounded-card border border-slate-200 bg-white">
+          <div className="mt-3 divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {quickLinks.map((item) => (
-              <button key={item.label} onClick={() => navigate(`/settings?section=${item.section}`)} className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition active:bg-slate-50" aria-label={`打开${item.label}`}>
+              <button key={item.label} onClick={() => navigate(`/settings?section=${item.section}`)} className="touch-press flex w-full items-center gap-3 px-4 py-3.5 text-left transition active:bg-slate-50" aria-label={`打开${item.label}`}>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                   <item.icon size={17} aria-hidden="true" />
                 </span>
@@ -145,7 +145,7 @@ export default function MobileProfile() {
             <SectionHeader title="最近足迹" to="/mobile/trips" />
             <div className="mt-3 grid grid-cols-4 gap-2">
               {recentTripPois.slice(0, 8).map((poi) => (
-                <Link key={poi.id} to={`/poi/${poi.id}`} className="block overflow-hidden rounded-card border border-slate-200 bg-white" aria-label={`查看地点：${poi.name}`}>
+                <Link key={poi.id} to={`/poi/${poi.id}`} className="block overflow-hidden rounded-2xl border border-slate-200 bg-white" aria-label={`查看地点：${poi.name}`}>
                   <SmartImage src={poi.cover} alt={poi.name} fallbackText={poi.name} className="aspect-square w-full" />
                   <p className="truncate px-1.5 py-1 text-[11px] font-medium text-slate-600">{poi.name}</p>
                 </Link>
@@ -159,7 +159,7 @@ export default function MobileProfile() {
 }
 function ProfileHeader({ user, profile }: { user: ReturnType<typeof useApp>['user']; profile: DerivedProfile }) {
   return (
-    <section className="relative overflow-hidden rounded-card bg-gradient-to-br from-brand-700 via-brand-600 to-locate-600 p-5 text-white shadow-card">
+    <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-locate-600 p-5 text-white shadow-card">
       <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
       <div className="relative flex items-center gap-4">
         {user ? (
@@ -191,7 +191,7 @@ function ProfileHeader({ user, profile }: { user: ReturnType<typeof useApp>['use
 
 function Metric({ icon: Icon, value, label }: { icon: LucideIcon; value: number | string; label: string }) {
   return (
-    <div className="rounded-card border border-slate-200 bg-white px-1 py-3 text-center shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white px-1 py-3 text-center shadow-sm">
       <Icon size={15} className="mx-auto text-brand-600" aria-hidden="true" />
       <p className="mt-1 text-base font-bold leading-none text-slate-900">{value}</p>
       <p className="mt-1 text-[11px] text-slate-400">{label}</p>
@@ -226,7 +226,7 @@ function MiniBar({ label, value }: { label: string; value: number }) {
 
 function EmptyInline({ to, icon: Icon, label }: { to: string; icon: LucideIcon; label: string }) {
   return (
-    <Link to={to} className="flex w-full items-center gap-3 rounded-card border border-dashed border-slate-300 bg-slate-50/60 p-4">
+    <Link to={to} className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
         <Icon size={18} aria-hidden="true" />
       </span>

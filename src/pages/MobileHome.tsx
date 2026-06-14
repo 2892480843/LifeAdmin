@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
   ArrowRight,
-  Compass,
+  CloudFog,
+  CloudLightning,
   CloudRain,
+  CloudSun,
+  Cloud,
   Clock,
+  Compass,
   Droplets,
   Footprints,
   Heart,
@@ -14,7 +18,9 @@ import {
   Plus,
   Radio,
   ShieldAlert,
+  Snowflake,
   Sparkles,
+  Sun,
   Ticket,
   TrendingUp,
   Users,
@@ -28,15 +34,15 @@ import { useApp } from '../store/AppContext'
 import type { EventType, Poi } from '../types'
 import { displayPlaceImage } from '../utils/poiImages'
 
-const weatherIconEmoji: Record<string, string> = {
-  sun: '☀️',
-  'cloud-sun': '⛅',
-  cloud: '☁️',
-  'cloud-rain': '🌧️',
-  'cloud-lightning': '⛈️',
-  snow: '❄️',
-  wind: '💨',
-  fog: '🌫️',
+const weatherIconMap: Record<string, LucideIcon> = {
+  sun: Sun,
+  'cloud-sun': CloudSun,
+  cloud: Cloud,
+  'cloud-rain': CloudRain,
+  'cloud-lightning': CloudLightning,
+  snow: Snowflake,
+  wind: Wind,
+  fog: CloudFog,
 }
 
 const eventTypeIcon: Record<EventType, LucideIcon> = {
@@ -81,17 +87,20 @@ export default function MobileHome() {
     return '晚上好'
   })()
 
-  const weatherIcon = weatherIconEmoji[weather.icon] ?? '🌤️'
+  const WeatherIcon = weatherIconMap[weather.icon] ?? CloudSun
 
   return (
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-md px-4 pb-8 pt-4">
-        {/* 顶部问候 + 天气 */}
+        {/* Hero: greeting + weather */}
         <section
-          className="relative overflow-hidden rounded-card bg-gradient-to-br from-brand-600 via-brand-600 to-locate-600 p-5 text-white shadow-card"
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-brand-600 to-locate-600 p-5 text-white shadow-card"
           aria-label="今日概览"
         >
-        <div className="flex items-start justify-between gap-3">
+          <div className="hero-glow -right-10 -top-12 h-40 w-40 bg-locate-300/50" aria-hidden="true" />
+          <div className="hero-glow -bottom-16 left-10 h-36 w-36 bg-brand-300/40" aria-hidden="true" />
+
+          <div className="relative flex items-start justify-between gap-3">
             <Link to="/mobile/profile" className="flex min-w-0 items-center gap-3" aria-label="查看个人中心">
               {user ? (
                 <SmartImage src={user.avatar} alt={user.name} fallbackText={user.name?.slice(0, 1) ?? 'U'} className="h-12 w-12 shrink-0 rounded-full border-2 border-white/70 object-cover" />
@@ -108,13 +117,13 @@ export default function MobileHome() {
                 </p>
               </div>
             </Link>
-          <div className="shrink-0 text-right">
-              <div className="text-3xl leading-none" aria-hidden="true">{weatherIcon}</div>
+            <div className="shrink-0 text-right">
+              <WeatherIcon size={32} strokeWidth={1.8} className="ml-auto text-white/90" aria-hidden="true" />
               <p className="mt-1 text-2xl font-bold leading-none">{weather.temp}°</p>
             </div>
           </div>
 
-          <div className="mt-3 flex items-center gap-4 border-t border-white/20 pt-2.5 text-xs text-white/85">
+          <div className="relative mt-3 flex items-center gap-4 border-t border-white/20 pt-2.5 text-xs text-white/85">
             <span className="inline-flex items-center gap-1">
               <MapPin size={13} aria-hidden="true" /> {weather.city}
             </span>
@@ -127,23 +136,23 @@ export default function MobileHome() {
           </div>
         </section>
 
-        {/* 快捷功能宫格 */}
+        {/* Quick actions */}
         <section className="mt-5" aria-label="快捷入口">
           <div className="grid grid-cols-4 gap-3">
-            <QuickAction icon={Sparkles} label="新建行程" to="/new-trip" accent="bg-brand-50 text-brand-600" />
-            <QuickAction icon={Compass} label="地图探索" to="/mobile/explore" accent="bg-emerald-50 text-emerald-600" />
-            <QuickAction icon={Radio} label="实时动态" to="/mobile/realtime" accent="bg-amber-50 text-amber-600" />
-            <QuickAction icon={Ticket} label="我的行程" to="/mobile/trips" accent="bg-locate-50 text-locate-600" />
+            <QuickAction icon={Sparkles} label="新建行程" to="/new-trip" gradient="from-brand-500 to-brand-600" />
+            <QuickAction icon={Compass} label="地图探索" to="/mobile/explore" gradient="from-emerald-500 to-locate-500" />
+            <QuickAction icon={Radio} label="实时动态" to="/mobile/realtime" gradient="from-amber-500 to-notice-500" />
+            <QuickAction icon={Ticket} label="我的行程" to="/mobile/trips" gradient="from-locate-500 to-locate-600" />
           </div>
         </section>
 
-        {/* 进行中行程 */}
+        {/* Active trip */}
         <section className="mt-6">
           <SectionHeader title="进行中的行程" to="/mobile/trips" />
           {activeTrip ? (
             <Link
               to={`/trip/${activeTrip.id}`}
-              className="card-interactive mt-3 block overflow-hidden rounded-card border border-slate-200 bg-white shadow-sm"
+              className="m-card-press mt-3 block"
               aria-label={`查看行程：${activeTrip.title}`}
             >
               <div className="relative h-32 w-full">
@@ -186,7 +195,7 @@ export default function MobileHome() {
           ) : (
             <Link
               to="/new-trip"
-              className="card-interactive mt-3 flex flex-col items-center justify-center gap-2 rounded-card border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center"
+              className="touch-press mt-3 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center"
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600">
                 <Plus size={22} aria-hidden="true" />
@@ -197,12 +206,12 @@ export default function MobileHome() {
           )}
         </section>
 
-        {/* 高优先级实时提醒 */}
+        {/* Top alert */}
         {topAlert && (
           <section className="mt-6">
             <Link
               to="/mobile/realtime"
-              className="card-interactive flex items-start gap-3 rounded-card border border-amber-200 bg-amber-50/70 p-3"
+              className="touch-press flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-3"
               aria-label={`查看提醒：${topAlert.title}`}
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
@@ -220,16 +229,16 @@ export default function MobileHome() {
           </section>
         )}
 
-        {/* 推荐景点 */}
+        {/* Recommended POIs */}
         {recommendedPois.length > 0 && (
           <section className="mt-6">
             <SectionHeader title="为你推荐" to="/mobile/explore" />
-            <div className="-mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+            <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
               {recommendedPois.map((poi) => (
                 <Link
                   key={poi.id}
                   to={`/poi/${poi.id}`}
-                  className="card-interactive w-36 shrink-0 snap-start overflow-hidden rounded-card border border-slate-200 bg-white"
+                  className="touch-press w-36 shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-200/80 bg-white"
                   aria-label={`查看景点：${poi.name}`}
                 >
                   <SmartImage
@@ -255,7 +264,7 @@ export default function MobileHome() {
           </section>
         )}
 
-        {/* 实时动态时间线 */}
+        {/* Realtime feed */}
         <section className="mt-6">
           <SectionHeader title="实时动态" to="/mobile/realtime" />
           <div className="mt-3 space-y-2">
@@ -266,7 +275,7 @@ export default function MobileHome() {
                 <Link
                   key={evt.id}
                   to="/mobile/realtime"
-                  className="card-interactive flex items-center gap-3 rounded-card border border-slate-200 bg-white p-3"
+                  className="touch-press flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3"
                   aria-label={`查看：${evt.title}`}
                 >
                   <span className={`h-2 w-2 shrink-0 rounded-full ${tone.dot}`} aria-hidden="true" />
@@ -286,16 +295,16 @@ export default function MobileHome() {
           </div>
         </section>
 
-        {/* 我的收藏 */}
+        {/* Favorites */}
         <section className="mt-6">
           <SectionHeader title="我的收藏" to="/mobile/explore" />
           {favoritePois.length > 0 ? (
-            <div className="-mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+            <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
               {favoritePois.map((poi) => (
                 <Link
                   key={poi.id}
                   to={`/poi/${poi.id}`}
-                  className="card-interactive flex w-44 shrink-0 snap-start items-center gap-3 rounded-card border border-slate-200 bg-white p-3"
+                  className="touch-press flex w-44 shrink-0 snap-start items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3"
                   aria-label={`查看收藏：${poi.name}`}
                 >
                   <SmartImage
@@ -315,7 +324,7 @@ export default function MobileHome() {
               ))}
             </div>
           ) : (
-            <div className="mt-3 flex items-center gap-3 rounded-card border border-dashed border-slate-300 bg-slate-50/60 p-4">
+            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-risk-50 text-risk-500">
                 <Heart size={18} aria-hidden="true" />
               </span>
@@ -335,20 +344,20 @@ function QuickAction({
   icon: Icon,
   label,
   to,
-  accent,
+  gradient,
 }: {
   icon: LucideIcon
   label: string
   to: string
-  accent: string
+  gradient: string
 }) {
   return (
     <Link
       to={to}
-      className="card-interactive flex flex-col items-center gap-1.5 rounded-card border border-slate-200 bg-white px-1 py-3.5 shadow-sm"
+      className="touch-press flex flex-col items-center gap-1.5 rounded-2xl border border-slate-200/80 bg-white px-1 py-3.5 shadow-sm"
       aria-label={label}
     >
-      <span className={`flex h-10 w-10 items-center justify-center rounded-full ${accent}`}>
+      <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm ${gradient}`}>
         <Icon size={18} aria-hidden="true" />
       </span>
       <span className="text-xs font-medium text-slate-600">{label}</span>
@@ -359,7 +368,10 @@ function QuickAction({
 function SectionHeader({ title, to }: { title: string; to: string }) {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="text-base font-bold text-slate-900">{title}</h2>
+      <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+        <span className="h-4 w-1 rounded-full bg-gradient-to-b from-brand-500 to-locate-500" aria-hidden="true" />
+        {title}
+      </h2>
       <Link
         to={to}
         className="inline-flex items-center gap-0.5 text-xs font-medium text-brand-600"

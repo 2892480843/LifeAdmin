@@ -64,7 +64,7 @@ export default function MobileRealtime() {
         {/* 标题 */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">实时动态</h1>
+            <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900"><span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-brand-500 to-locate-500" aria-hidden="true" />实时动态</h1>
             <p className="mt-0.5 text-xs text-slate-500">AI 持续监测行程风险，实时推送提醒</p>
           </div>
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-600">
@@ -123,7 +123,7 @@ export default function MobileRealtime() {
 
         {/* 事件列表 */}
         <section className="mt-5">
-          <h2 className="text-base font-bold text-slate-900">风险提醒</h2>
+          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900"><span className="h-4 w-1 rounded-full bg-gradient-to-b from-risk-500 to-notice-500" aria-hidden="true" />风险提醒</h2>
           <p className="mt-0.5 text-xs text-slate-500">系统监测到的实时风险事件与建议</p>
           {realtimeEvents.length > 0 ? (
             <div className="mt-3 space-y-2.5">
@@ -132,7 +132,7 @@ export default function MobileRealtime() {
                 const lvl = levelMeta[evt.level]
                 const EIcon = meta.icon
                 return (
-                  <div key={evt.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                  <div key={evt.id} className="touch-press overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
                     <div className="flex items-start gap-3 p-3.5">
                       <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${meta.bg} ${meta.iconColor}`}>
                         <EIcon size={18} aria-hidden="true" />
@@ -178,7 +178,7 @@ export default function MobileRealtime() {
 
         {/* 动态日志 */}
         <section className="mt-6">
-          <h2 className="text-base font-bold text-slate-900">行程动态</h2>
+          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900"><span className="h-4 w-1 rounded-full bg-gradient-to-b from-brand-500 to-locate-500" aria-hidden="true" />行程动态</h2>
           <p className="mt-0.5 text-xs text-slate-500">系统自动记录的行程推进节点</p>
           {dynamicLogs.length > 0 && (
             <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -204,7 +204,7 @@ export default function MobileRealtime() {
         </section>
 
         {/* AI 助手入口 */}
-        <Link to="/realtime" className="mt-6 flex items-center gap-3 rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-locate-50 p-4">
+        <Link to="/realtime" className="touch-press mt-6 flex items-center gap-3 rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-locate-50 p-4">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
             <Bot size={18} aria-hidden="true" />
           </span>
@@ -222,7 +222,7 @@ export default function MobileRealtime() {
 function RiskStat({ level, count }: { level: RealtimeEvent['level']; count: number }) {
   const lvl = levelMeta[level]
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center shadow-sm">
+    <div className="rounded-2xl border border-slate-200/80 bg-white p-3 text-center shadow-sm">
       <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-full ${lvl.chip}`}>
         <span className={`h-2.5 w-2.5 rounded-full ${lvl.dot}`} />
       </span>

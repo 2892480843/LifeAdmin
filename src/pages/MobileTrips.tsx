@@ -68,7 +68,7 @@ export default function MobileTrips() {
         {/* 页面标题 */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">我的行程</h1>
+            <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900"><span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-brand-500 to-locate-500" aria-hidden="true" />我的行程</h1>
             <p className="mt-0.5 text-xs text-slate-500">共 {trips.length} 个行程，随时查看与推进</p>
           </div>
           <Link
@@ -96,7 +96,7 @@ export default function MobileTrips() {
         </div>
 
         {/* 状态筛选 */}
-        <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
           {statusTabs.map((tab) => {
             const active = activeTab === tab
             return (
@@ -126,7 +126,7 @@ export default function MobileTrips() {
               return (
                 <div
                   key={trip.id}
-                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                  className="touch-press overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
                 >
                   <Link
                     to={`/trip/${trip.id}`}

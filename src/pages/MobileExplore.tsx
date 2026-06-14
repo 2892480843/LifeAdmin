@@ -1,6 +1,22 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Compass, Heart, MapPin, Search, SlidersHorizontal, X } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  Baby,
+  Camera,
+  Compass,
+  Heart,
+  Landmark,
+  MapPin,
+  Moon,
+  Palette,
+  Search,
+  ShoppingBag,
+  SlidersHorizontal,
+  Trees,
+  UtensilsCrossed,
+  X,
+} from 'lucide-react'
 import AppLayout from '../components/layout/AppLayout'
 import SmartImage from '../components/ui/SmartImage'
 import { Stars } from '../components/ui'
@@ -20,15 +36,15 @@ const categories: (PoiCategory | '全部')[] = [
   '夜生活',
 ]
 
-const categoryIcon: Record<string, string> = {
-  景点: '🏯',
-  美食: '🍜',
-  文化艺术: '🎭',
-  购物: '🛍️',
-  公园自然: '🌿',
-  历史遗迹: '🏛️',
-  亲子游: '🎡',
-  夜生活: '🌃',
+const categoryIcon: Record<string, LucideIcon> = {
+  景点: Landmark,
+  美食: UtensilsCrossed,
+  文化艺术: Palette,
+  购物: ShoppingBag,
+  公园自然: Trees,
+  历史遗迹: Camera,
+  亲子游: Baby,
+  夜生活: Moon,
 }
 
 type SortMode = 'recommended' | 'rating' | 'price'
@@ -61,7 +77,7 @@ export default function MobileExplore() {
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-md px-4 pb-8 pt-4">
         {/* 标题 */}
-        <h1 className="text-xl font-bold text-slate-900">探索景点</h1>
+        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900"><span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-brand-500 to-locate-500" aria-hidden="true" />探索景点</h1>
         <p className="mt-0.5 text-xs text-slate-500">发现 {pois.length} 个精选地点，收藏心仪景点</p>
 
         {/* 搜索栏 */}
@@ -81,7 +97,7 @@ export default function MobileExplore() {
         </div>
 
         {/* 分类筛选 */}
-        <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
           {categories.map((cat) => {
             const active = activeCat === cat
             return (
@@ -92,7 +108,7 @@ export default function MobileExplore() {
                   active ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border border-slate-200'
                 }`}
               >
-                {cat !== '全部' && <span className="text-xs">{categoryIcon[cat]}</span>}
+                {cat !== '全部' && (() => { const CatIcon = categoryIcon[cat]; return <CatIcon size={13} />; })()}
                 {cat}
               </button>
             )
@@ -189,7 +205,7 @@ function PoiCard({
   onToggleFav: () => void
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="touch-press overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
       <Link to={`/poi/${poi.id}`} className="card-interactive block" aria-label={`查看景点：${poi.name}`}>
         <div className="relative aspect-[4/3] w-full">
           <SmartImage

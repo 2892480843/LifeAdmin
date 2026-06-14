@@ -531,15 +531,67 @@ button {
     background: linear-gradient(90deg, var(--color-route), var(--color-locate));
   }
 
-  .safe-area-pb {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+ .safe-area-pb {
+   padding-bottom: env(safe-area-inset-bottom, 0px);
+ }
+
+  /* ---------- Mobile-only design helpers ---------- */
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
-  @media (min-width: 1536px) {
-    .route-plan-workbench {
-      grid-template-columns: minmax(17rem, 0.78fr) minmax(0, 1.22fr);
-    }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
+
+  /* Touch-friendly press feedback (works without hover) */
+  .touch-press {
+    @apply transition duration-[140ms] active:scale-[0.97];
+  }
+
+  /* Polished mobile card with subtle layered shadow */
+  .m-card {
+    @apply overflow-hidden rounded-2xl border border-slate-200/80 bg-white;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 4px 16px rgba(15, 23, 42, 0.05);
+  }
+
+  .m-card-press {
+    @apply m-card touch-press active:border-brand-200;
+  }
+
+  /* Frosted glass bottom navigation */
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* Decorative glow blobs for hero sections */
+  .hero-glow {
+    pointer-events: none;
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(32px);
+    opacity: 0.45;
+  }
+
+  /* Gradient text accent */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #3b82f6, #11bfae);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+ @media (min-width: 1536px) {
+   .route-plan-workbench {
+     grid-template-columns: minmax(17rem, 0.78fr) minmax(0, 1.22fr);
+   }
+ }
 }
 
 @keyframes page-enter {
