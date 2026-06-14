@@ -1066,7 +1066,9 @@ async function getRealtimeSnapshot(body = {}) {
     logs.push(realtimeLog('warning', '天气数据请求失败', '高德天气接口暂时不可用。'))
   }
 
-  const routeItems = currentLocation ? buildRouteItemsFromCurrentLocation(items, currentLocation, warnings, logs) : items
+  const routeItems = currentLocation
+    ? buildRouteItemsFromCurrentLocation(items, currentLocation, warnings, logs)
+    : buildRouteItemsFromFirstIncomplete(items, warnings, logs)
 
   if (routeItems.length >= 2) {
     route = await buildRealtimeRoute(routeItems, city, warnings, logs)
@@ -1281,6 +1283,17 @@ function buildRouteItemsFromCurrentLocation(items, currentLocation, warnings, lo
     },
     nextItem,
   ]
+}
+
+function buildRouteItemsFromFirstIncomplete(items, warnings, logs) {
+  const firstIncompleteIdx = items.findIndex((item) => item.status !== '已完成')
+  if (firstIncompleteIdx <= 0) return items
+
+  const remaining = items.slice(firstIncompleteIdx)
+  if (remaining.length < 2) return items
+
+  logs.push(realtimeLog('info', '路线从当前节点开始', `已跳过 ${firstIncompleteIdx} 个已完成节点，路线从 ${remaining[0].name} 开始计算。`))
+  return remaining
 }
 
 async function queryAmapWeather(city) {
