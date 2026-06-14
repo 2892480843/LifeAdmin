@@ -35,6 +35,8 @@ import { CitySelect, Slider, Stars } from '../components/ui'
 import SmartImage from '../components/ui/SmartImage'
 import { cities, cityOptionGroups } from '../mock'
 import { getAgentErrorMessage, isAgentRequestCanceled, searchPois, type AgentSearchSource } from '../services/agent'
+import { requestCurrentLocation } from '../services/locationService'
+import type { CurrentLocation, LocationStatus } from '../services/locationService'
 import { useApp } from '../store/AppContext'
 import type { Poi, PoiCategory, PoiImageConfidence } from '../types'
 import { displayPlaceImage, hasPendingPlaceImageReview } from '../utils/poiImages'
@@ -227,6 +229,8 @@ export default function Explore() {
   const [searchError, setSearchError] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
   const [resultsDrawer, setResultsDrawer] = useState<DrawerState>('closed')
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>('idle')
+  const [userLocation, setUserLocation] = useState<CurrentLocation | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const searchAbortRef = useRef<AbortController | null>(null)
   const searchRequestIdRef = useRef(0)
@@ -273,7 +277,8 @@ export default function Explore() {
         if (keyword && !p.name.includes(keyword) && !p.tags.some((t) => t.includes(keyword))) return false
         if (activeCats.length && !activeCats.includes(p.category)) return false
         if (p.rating < minRating) return false
-        if (p.distance > maxDistance) return false
+        const dist = userLocation && p.lng && p.lat ? haversineKm(userLocation.lat, userLocation.lng, p.lat, p.lng) : p.distance
+        if (dist > maxDistance) return false
         if (!matchesOpenFilter(p.openingHours, openFilter)) return false
         return true
       })
@@ -284,7 +289,7 @@ export default function Explore() {
         rating: p.rating,
         reviewCount: p.reviewCount,
         cover: displayPlaceImage(p.cover, p.imageConfidence),
-        distance: p.distance,
+        distance: userLocation && p.lng && p.lat ? haversineKm(userLocation.lat, userLocation.lng, p.lat, p.lng) : p.distance,
         suggestedDuration: p.suggestedDuration,
         openingHours: normalizeOpeningHours(p.openingHours),
         lng: p.lng,
@@ -300,7 +305,7 @@ export default function Explore() {
         imageReviewReason: p.imageReviewReason,
         source: 'local',
       }))
-  }, [cityId, favoritesOnly, favorites, keyword, activeCats, minRating, maxDistance, openFilter, cityPois])
+  }, [cityId, favoritesOnly, favorites, keyword, activeCats, minRating, maxDistance, openFilter, cityPois, userLocation])
 
   const displayResults = remoteResults ?? filtered
   const activeResult = activePoi ? displayResults.find((p) => p.id === activePoi) ?? null : null
@@ -328,28 +333,47 @@ export default function Explore() {
     [trips],
   )
 
-  const markers: MapMarker[] = displayResults.map((p, index) => {
-    const status: MapMarker['status'] = activePoi === p.id
-      ? 'selected'
-      : joinedPoiIds.has(p.id)
-        ? 'joined'
-        : favorites.includes(p.id)
-          ? 'favorite'
-          : p.imagePendingReview
-            ? 'risk'
-            : 'default'
-    return {
-      id: p.id,
-      x: p.x || 45 + (index % 5) * 8,
-      y: p.y || 35 + Math.floor(index / 5) * 8,
-      lng: p.lng,
-      lat: p.lat,
-      label: p.name,
-      color: activePoi === p.id ? '#2563eb' : status === 'joined' ? '#11bfae' : status === 'favorite' ? '#f59e0b' : categoryColor[p.category],
-      active: activePoi === p.id,
-      status,
+  const markers: MapMarker[] = useMemo(() => {
+    const poiMarkers = displayResults.map((p, index) => {
+      const status: MapMarker['status'] = activePoi === p.id
+        ? 'selected'
+        : joinedPoiIds.has(p.id)
+          ? 'joined'
+          : favorites.includes(p.id)
+            ? 'favorite'
+            : p.imagePendingReview
+              ? 'risk'
+              : 'default'
+      return {
+        id: p.id,
+        x: p.x || 45 + (index % 5) * 8,
+        y: p.y || 35 + Math.floor(index / 5) * 8,
+        lng: p.lng,
+        lat: p.lat,
+        label: p.name,
+        color: activePoi === p.id ? '#2563eb' : status === 'joined' ? '#11bfae' : status === 'favorite' ? '#f59e0b' : categoryColor[p.category],
+        active: activePoi === p.id,
+        status,
+      }
+    })
+
+    if (userLocation) {
+      const geoItems = displayResults.filter((p) => p.lng && p.lat)
+      if (geoItems.length > 0) {
+        const lngs = [userLocation.lng, ...geoItems.map((p) => p.lng!)]
+        const lats = [userLocation.lat, ...geoItems.map((p) => p.lat!)]
+        const minLng = Math.min(...lngs), maxLng = Math.max(...lngs)
+        const minLat = Math.min(...lats), maxLat = Math.max(...lats)
+        const lngSpan = Math.max(maxLng - minLng, 0.0001)
+        const latSpan = Math.max(maxLat - minLat, 0.0001)
+        const x = Math.min(92, Math.max(8, 10 + ((userLocation.lng - minLng) / lngSpan) * 80))
+        const y = Math.min(92, Math.max(8, 90 - ((userLocation.lat - minLat) / latSpan) * 80))
+        poiMarkers.push({ id: 'user-location', x, y, lng: userLocation.lng, lat: userLocation.lat, label: '我的位置', color: '#0f766e', active: true, status: 'default' as const })
+      }
     }
-  })
+
+    return poiMarkers
+  }, [displayResults, activePoi, joinedPoiIds, favorites, userLocation])
 
   useEffect(() => {
     return () => {
@@ -373,6 +397,20 @@ export default function Explore() {
       setActivePoi(null)
     }
   }, [activePoi, displayResults])
+
+  const handleLocate = async () => {
+    if (locationStatus === 'requesting') return
+    setLocationStatus('requesting')
+    setSearchError('')
+    const result = await requestCurrentLocation()
+    setLocationStatus(result.status)
+    if (result.status === 'success' && result.location) {
+      setUserLocation(result.location)
+    } else {
+      const msg = result.error ?? (result.status === 'denied' ? '定位未授权，请在浏览器设置中允许位置访问' : '定位失败，请检查浏览器权限后重试')
+      setSearchError(msg)
+    }
+  }
 
   const toggleCat = (category: PoiCategory) => {
     setActiveCats((current) =>
@@ -903,8 +941,8 @@ export default function Explore() {
         <main className="relative min-h-0">
           <MapCanvas markers={markers} onMarkerClick={handleMarkerClick} height="100%" className="!rounded-none !border-0" />
           <div className="absolute left-4 right-4 top-4 z-20 mx-auto max-w-xl">{renderSearchBar('panel')}</div>
-          <button type="button" onClick={() => setSearchError('附近定位暂未接入，当前使用地图中心展示周边结果')} className="os-icon-button absolute left-4 top-20 z-20" aria-label="附近定位">
-            <Navigation size={16} aria-hidden="true" />
+          <button type="button" onClick={() => void handleLocate()} disabled={locationStatus === 'requesting'} className={`os-icon-button absolute left-4 top-20 z-20 ${locationStatus === 'success' ? 'text-teal-600 ring-1 ring-teal-300' : ''}`} aria-label="获取当前位置">
+            {locationStatus === 'requesting' ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : <Navigation size={16} aria-hidden="true" />}
           </button>
           <button type="button" onClick={() => setSearchError('全屏地图暂未接入，当前保持三栏布局')} className="os-icon-button absolute bottom-4 right-4 z-20" aria-label="全屏">
             <Maximize2 size={16} aria-hidden="true" />
@@ -1243,4 +1281,13 @@ function toRemotePoi(result: ExploreResult, cityId: string): Poi {
     description: `${result.name} 位于${result.address ?? result.city ?? '所在城市'}。该地点来自${sourceLabel}，详情信息以服务方实时结果为准。`,
     reviews: [],
   }
+}
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371
+  const toRad = (deg: number) => (deg * Math.PI) / 180
+  const dLat = toRad(lat2 - lat1)
+  const dLng = toRad(lng2 - lng1)
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
