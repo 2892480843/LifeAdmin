@@ -22,7 +22,15 @@
 
 ### 移动端页面（App 端）
 
-窄屏自动进入 `/mobile` 路由，内置底部导航栏与 5 个移动端页面：
+窄屏（≤767px）自动进入 `/mobile` 路由，内置底部导航栏与 5 个移动端页面。
+
+| 首页 | 行程 | 探索 |
+|:---:|:---:|:---:|
+| ![首页](./docs/screenshots/mobile-home.png) | ![行程](./docs/screenshots/mobile-trips.png) | ![探索](./docs/screenshots/mobile-explore.png) |
+
+| 动态 | 我的 |
+|:---:|:---:|
+| ![动态](./docs/screenshots/mobile-realtime.png) | ![我的](./docs/screenshots/mobile-profile.png) |
 
 | 页面 | 路由 | 说明 |
 |---|---|---|
