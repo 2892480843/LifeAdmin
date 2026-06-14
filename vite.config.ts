@@ -8,4 +8,8 @@ export default defineConfig({
     port: 5173,
     open: false,
   },
+  build: {
+    // POI 区域数据文件本身体积较大，上调阈值避免误报
+    chunkSizeWarningLimit: 5000,
+  },
 })

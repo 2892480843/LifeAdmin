@@ -218,7 +218,7 @@ export default function TripOverview() {
                   <Card key={day.day} className="p-4">
                     <div className="mb-3 flex items-center gap-2">
                       <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold text-white" style={{ backgroundColor: dayColors[di % dayColors.length] }}>
-                        D{day.day}
+                        {day.day}
                       </span>
                       <div>
                         <p className="text-sm font-semibold text-slate-800">第 {day.day} 天 · {day.title}</p>

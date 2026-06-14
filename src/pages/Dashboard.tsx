@@ -445,7 +445,7 @@ function RoutePreviewItem({
           <span className="truncate text-xs font-semibold text-slate-500">{item.time}</span>
         </span>
         <span className="shrink-0 rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
-          D{item.day}
+          第{item.day}天
         </span>
       </span>
       <span className="mt-2 block truncate text-sm font-semibold text-slate-950">{item.name}</span>
