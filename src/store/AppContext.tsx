@@ -1,8 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { ActivityStatus, Poi, RoutePlan, Trip, TripDraft, User } from '../types'
 import { createDefaultDraft } from '../mock/draft'
-import { loadGeneratedPoiById, loadPoisByCity } from '../mock/poiLoader'
+import { loadGeneratedPoiById, loadPoisByCity, prefetchPoisForCity } from '../mock/poiLoader'
 import { pois as mockPois } from '../mock/pois'
 import { trips as mockTrips } from '../mock/trips'
 import { currentUser } from '../mock/users'
@@ -50,6 +50,8 @@ const isProductionDataMode = import.meta.env.VITE_AGENT_AUTH_MODE === 'productio
 const cloneTrips = () => JSON.parse(JSON.stringify(mockTrips)) as Trip[]
 const markDemoPoi = (poi: Poi): Poi => ({ ...poi, sourceKind: 'demo_mock', sourceProvider: 'demo_mock' })
 
+const EMPTY_POIS: Poi[] = []
+
 function readStoredUser() {
   const raw = localStorage.getItem(USER_STORAGE_KEY)
   if (!raw) return null
@@ -73,11 +75,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>(['waitan', 'wukangroad'])
   const localSeedPois = isProductionDataMode ? [] : mockPois
   const productionPois: Poi[] = isProductionDataMode ? remotePois : []
-  const demoPois = localSeedPois.map(markDemoPoi)
+  // demoPois 仅依赖稳定来源，稳定引用避免 allPois 每帧重算并引发全站消费者重渲染
+  const demoPois = useMemo(
+    () => (isProductionDataMode ? EMPTY_POIS : localSeedPois).map(markDemoPoi),
+    [isProductionDataMode, localSeedPois],
+  )
   const allPois = useMemo(
     () => uniquePois([...demoPois, ...loadedPois, ...productionPois, ...remotePois]),
     [demoPois, loadedPois, productionPois, remotePois],
   )
+  // 用 ref 读取最新 allPois，让 loadPoiById 保持稳定引用，避免连带 value 重建
+  const allPoisRef = useRef(allPois)
+  allPoisRef.current = allPois
+  // 按 cityId 预建索引，PoiDetail 的 nearby 查询从 O(n) filter 降为 O(1)
+  const poisByCity = useMemo(() => indexPoisByCity(allPois), [allPois])
 
   const loadPoisByCityId = useCallback(async (cityId: string) => {
     if (isProductionDataMode) return []
@@ -88,7 +99,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadPoiById = useCallback(async (poiId: string) => {
-    const local = allPois.find((poi) => poi.id === poiId)
+    const local = allPoisRef.current.find((poi) => poi.id === poiId)
     if (local) return local
     if (isProductionDataMode) return undefined
 
@@ -96,7 +107,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const demoFound = found ? markDemoPoi(found) : undefined
     if (demoFound) setLoadedPois((current) => mergePois(current, [demoFound]))
     return demoFound
-  }, [allPois])
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -104,6 +115,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user))
     } else {
       localStorage.removeItem(AUTH_STORAGE_KEY)
+    }
+  }, [user])
+
+  // 登录后预热高频分片：默认城市 shanghai 属 featured（gzip ~92KB），
+  // 提前加载可消除进入 Dashboard/Explore 时的首屏 POI 等待
+  useEffect(() => {
+    if (user && !isProductionDataMode) {
+      prefetchPoisForCity('shanghai')
     }
   }, [user])
 
@@ -159,7 +178,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       upsertRemotePoi: (poi) =>
         setRemotePois((items) => [poi, ...items.filter((item) => item.id !== poi.id)]),
       getPoiById: (poiId) => allPois.find((poi) => poi.id === poiId),
-      getPoisByCityId: (cityId) => allPois.filter((poi) => poi.cityId === cityId),
+      getPoisByCityId: (cityId) => poisByCity.get(cityId) ?? EMPTY_POIS,
       loadPoiById,
       loadPoisByCityId,
       favorites,
@@ -169,7 +188,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ),
       isFavorite: (poiId) => favorites.includes(poiId),
     }),
-    [user, draft, selectedPlan, trips, allPois, loadPoiById, loadPoisByCityId, favorites],
+    [user, draft, selectedPlan, trips, allPois, poisByCity, loadPoiById, loadPoisByCityId, favorites],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
@@ -182,6 +201,16 @@ function uniquePois(items: Poi[]) {
     seen.add(item.id)
     return true
   })
+}
+
+function indexPoisByCity(items: Poi[]): Map<string, Poi[]> {
+  const map = new Map<string, Poi[]>()
+  for (const poi of items) {
+    const list = map.get(poi.cityId)
+    if (list) list.push(poi)
+    else map.set(poi.cityId, [poi])
+  }
+  return map
 }
 
 function mergePois(current: Poi[], incoming: Poi[]) {

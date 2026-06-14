@@ -7,6 +7,11 @@
     <meta name="description" content="智行路线 · AI 智能旅行规划平台，一键生成个性化出行方案，实时路况导航，智能 POI 推荐。" />
     <meta name="theme-color" content="#2563eb" />
     <title>智行路线 · AI 智能旅行规划平台</title>
+    <!-- 提前建立地图 SDK 与 POI 封面图 CDN 的连接，减少首屏资源握手延迟 -->
+    <link rel="preconnect" href="https://webapi.amap.com" crossorigin />
+    <link rel="dns-prefetch" href="https://webapi.amap.com" />
+    <link rel="dns-prefetch" href="https://aos-cdn-image.amap.com" />
+    <link rel="dns-prefetch" href="https://img.alicdn.com" />
   </head>
   <body>
     <div id="root"></div>
