@@ -1,0 +1,23 @@
+node_modules/
+dist/
+frontend-audit-shots/
+.DS_Store
+
+.env
+.env.*
+!.env.example
+
+.claude/
+.codex/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+agent-server.log
+agent-server.err.log
+*.pid
+
+# 运行时数据（审计日志、provider 快照），由应用运行时生成，不纳入版本控制
+data/runtime/
