@@ -350,15 +350,8 @@ function ProfileSection({
   onToast: (message: string) => void
 }) {
   const fileRef = useRef<HTMLInputElement>(null)
-  const [avatarPreview, setAvatarPreview] = useState('')
   const [form, setForm] = useState<ProfileForm>(() => profileFormFromUser(user))
   const [saved, setSaved] = useState(false)
-
-  useEffect(() => {
-    return () => {
-      if (avatarPreview) URL.revokeObjectURL(avatarPreview)
-    }
-  }, [avatarPreview])
 
   useEffect(() => {
     setForm(profileFormFromUser(user))
@@ -373,16 +366,27 @@ function ProfileSection({
     fileRef.current?.click()
   }
 
-  const handleAvatarFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
+    // 清空值，保证重复选择同一文件也能再次触发 change
+    event.target.value = ''
     if (!file) return
     if (!file.type.startsWith('image/')) {
       onToast('请选择图片文件')
       return
     }
-    if (avatarPreview) URL.revokeObjectURL(avatarPreview)
-    setAvatarPreview(URL.createObjectURL(file))
-    onToast('头像预览已更新')
+    if (file.size > AVATAR_MAX_BYTES) {
+      onToast('图片不能超过 4MB，请压缩后再上传')
+      return
+    }
+    // 压缩为 JPEG dataURL 并写入表单，预览与持久化都走这一份数据
+    try {
+      const dataUrl = await fileToAvatarDataUrl(file)
+      setField('avatar')(dataUrl)
+      onToast('头像已更新，点击「保存更改」生效')
+    } catch {
+      onToast('图片读取失败，请更换图片重试')
+    }
   }
 
   const saveProfile = () => {
@@ -402,7 +406,7 @@ function ProfileSection({
       <div className="mb-6 flex items-center gap-4">
         <div className="relative">
           <SmartImage
-            src={avatarPreview || user?.avatar || ''}
+            src={form.avatar || user?.avatar || ''}
             alt={user?.name ?? ''}
             fallbackText={user?.name?.slice(0, 1) ?? 'U'}
             className="h-20 w-20 rounded-2xl object-cover"
@@ -464,6 +468,7 @@ function profileFormFromUser(user: User | null): ProfileForm {
     phone: user?.phone ?? '',
     city: user?.city ?? '上海',
     bio: user?.bio ?? '',
+    avatar: user?.avatar ?? '',
   }
 }
 
