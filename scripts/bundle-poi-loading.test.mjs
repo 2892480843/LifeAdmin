@@ -51,7 +51,8 @@ test('build-generated-pois writes a lightweight poi id shard index', async () =>
   const indexSource = readFileSync(join(tempRoot, 'src/mock/generatedPois/poiShardIndex.ts'), 'utf8')
   assert.match(indexSource, /export const poiShardIndex/)
   assert.match(indexSource, /"beijing-food-1": "featured"/)
-  assert.match(indexSource, /"guangzhou-park-1": "south"/)
+  // 省份级分片：广州(adcode 440100)归入 p44，而非旧的 south 区域
+  assert.match(indexSource, /"guangzhou-park-1": "p44"/)
 })
 
 function minimalPoi(id, cityId) {
