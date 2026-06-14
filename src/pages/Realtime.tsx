@@ -460,7 +460,7 @@ export default function Realtime() {
               <RealtimeMetric
                 icon={Sun}
                 label="天气状况"
-                value={snapshot?.weather ? `${snapshot.weather.weather} ${snapshot.weather.temperature}°C` : '暂无实时天气数据'}
+                value={snapshot?.weather ? `${snapshot.weather.weather} ${snapshot.weather.temperature}℃` : '暂无实时天气数据'}
                 detail={snapshot?.weather ? '高德天气已更新' : '等待实时天气接口返回'}
                 tone="notice"
               />

@@ -1451,20 +1451,27 @@ async function queryAmapTrafficCircle(point) {
   const evaluation = trafficInfo.evaluation || {}
   const roads = Array.isArray(trafficInfo.roads) ? trafficInfo.roads : []
   return {
-    status: evaluation.status || '',
-    description: evaluation.description || '',
-    expedite: evaluation.expedite || '',
-    congested: evaluation.congested || '',
-    blocked: evaluation.blocked || '',
-    unknown: evaluation.unknown || '',
-    roads: roads.slice(0, 8).map((road) => ({
-      name: road.name || '',
-      status: road.status || '',
-      direction: road.direction || '',
-      angle: road.angle || '',
-      speed: road.speed || '',
-    })),
-  }
+   status: normalizeTrafficStatusCode(evaluation.status || ''),
+   description: evaluation.description || '',
+   expedite: evaluation.expedite || '',
+   congested: evaluation.congested || '',
+   blocked: evaluation.blocked || '',
+   unknown: evaluation.unknown || '',
+   roads: roads.slice(0, 8).map((road) => ({
+     name: road.name || '',
+     status: normalizeTrafficStatusCode(road.status || ''),
+     direction: road.direction || '',
+     angle: road.angle || '',
+     speed: road.speed || '',
+   })),
+ }
+}
+
+// AMap traffic status codes: 0=未知 1=畅通 2=缓行 3=拥堵 4=严重拥堵
+function normalizeTrafficStatusCode(value) {
+  const code = String(value || '').trim()
+  const map = { '0': '未知', '1': '畅通', '2': '缓行', '3': '拥堵', '4': '严重拥堵' }
+  return map[code] || code
 }
 
 function buildRealtimeEvents({ weather, route, traffic }) {
@@ -1747,12 +1754,14 @@ function summarizeRouteTraffic(tmcs) {
 }
 
 function isCongestedTraffic(status = '') {
-  return /拥堵|缓行|blocked|congested/i.test(status)
+  const text = normalizeTrafficStatusCode(status)
+  return /拥堵|缓行|blocked|congested/i.test(text)
 }
 
 function trafficLevel(status = '') {
-  if (String(status).includes('严重')) return '高'
-  if (isCongestedTraffic(status)) return '中'
+  const text = normalizeTrafficStatusCode(status)
+  if (text.includes('严重')) return '高'
+  if (isCongestedTraffic(text)) return '中'
   return '低'
 }
 
