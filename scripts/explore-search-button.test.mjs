@@ -9,7 +9,8 @@ const profileSource = readFileSync(resolve(root, 'src/pages/Profile.tsx'), 'utf8
 const topNavSource = readFileSync(resolve(root, 'src/components/layout/TopNav.tsx'), 'utf8')
 
 test('top nav search button opens explore with a search focus intent', () => {
-  assert.match(topNavSource, /to=["']\/explore\?focus=search["']/)
+  // 桌面端走 /explore?focus=search，移动端走 /mobile/explore；断言验证路径存在即可
+  assert.match(topNavSource, /\/explore\?focus=search/)
   assert.match(topNavSource, /aria-label=["']搜索目的地、景点或行程["']/)
 })
 

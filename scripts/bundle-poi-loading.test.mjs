@@ -11,7 +11,8 @@ const appContextSource = readFileSync(resolve(root, 'src/store/AppContext.tsx'),
 const poiLoaderSource = readFileSync(resolve(root, 'src/mock/poiLoader.ts'), 'utf8')
 
 test('app routes lazy-load pages behind Suspense', () => {
-  assert.match(appSource, /import \{ lazy, Suspense \} from 'react'/)
+  // App.tsx 同时导入 Component（AppErrorBoundary 使用），断言允许其他命名导入
+  assert.match(appSource, /import \{.*\blazy\b.*\bSuspense\b.*\} from 'react'/)
   assert.doesNotMatch(appSource, /import Dashboard from '\.\/pages\/Dashboard'/)
   assert.match(appSource, /const Dashboard = lazy\(\(\) => import\('\.\/pages\/Dashboard'\)\)/)
   assert.match(appSource, /<Suspense fallback=/)
