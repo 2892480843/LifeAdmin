@@ -205,7 +205,7 @@ function ProfileHeroCard({
         <div className="self-end rounded-card border border-slate-200 bg-slate-50/80 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase text-slate-400">路线画像</p>
+              <p className="text-xs font-semibold uppercase text-slate-500">路线画像</p>
               <p className="mt-1 text-sm font-semibold text-slate-800">{profile.pace}</p>
             </div>
             <span className="status-dot-live" />
@@ -232,7 +232,7 @@ function PreferenceInsightPanel({ profile, pois }: { profile: DerivedProfile; po
     <SystemPanel accent="emerald" showAccentRail={false} className="p-5 lg:p-6">
       <SectionTitle
         title={<span className="flex items-center gap-2"><Sparkles size={17} className="text-locate-600" aria-hidden="true" /> AI 偏好洞察</span>}
-        extra={<span className="text-xs text-slate-400">基于行程、收藏与偏好生成</span>}
+        extra={<span className="text-xs text-slate-500">基于行程、收藏与偏好生成</span>}
         className="mb-4"
       />
 
@@ -356,7 +356,7 @@ function RecentRouteAssets({
                   </div>
                   <div className="p-3">
                     <p className="line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-800 group-hover:text-brand-700">{trip.title}</p>
-                    <p className="mt-2 flex items-center gap-1 text-xs text-slate-400">
+                    <p className="mt-2 flex items-center gap-1 text-xs text-slate-500">
                       <MapPin size={12} aria-hidden="true" />
                       {getCity(trip.cityId)?.name ?? '未知城市'} · {trip.days} 天
                     </p>
@@ -417,7 +417,7 @@ function FavoritePlaces({ favPois, onOpenPoi }: { favPois: Poi[]; onOpenPoi: (po
     <Card className="p-4">
       <SectionTitle
         title={<span className="flex items-center gap-2"><Heart size={16} className="text-rose-500" aria-hidden="true" /> 我的收藏</span>}
-        extra={<span className="text-xs text-slate-400">{favPois.length} 个</span>}
+        extra={<span className="text-xs text-slate-500">{favPois.length} 个</span>}
         className="mb-3"
       />
       <div className="space-y-2">
@@ -526,7 +526,7 @@ function HeroMetric({
           <Icon size={16} aria-hidden="true" />
         </span>
       </div>
-      <p className="relative mt-2 truncate text-xs text-slate-400">{detail}</p>
+      <p className="relative mt-2 truncate text-xs text-slate-500">{detail}</p>
     </div>
   )
 }
@@ -568,7 +568,7 @@ function EmptyLink({
   return (
     <div className={`flex flex-col items-center rounded-lg border border-dashed border-slate-200 bg-white/70 text-center ${compact ? 'px-4 py-6' : 'px-6 py-10'}`}>
       <Icon size={compact ? 20 : 24} className="mb-2 text-slate-300" aria-hidden="true" />
-      <p className="text-sm leading-5 text-slate-400">{label}</p>
+      <p className="text-sm leading-5 text-slate-500">{label}</p>
       <Link to={to} className="mt-3 text-sm font-medium text-brand-600 hover:text-brand-700">
         {action}
       </Link>
@@ -579,7 +579,7 @@ function EmptyLink({
 function PrefRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-slate-400">{label}</span>
+      <span className="text-slate-500">{label}</span>
       <span className="min-w-0 truncate font-medium text-slate-700">{value}</span>
     </div>
   )
@@ -600,7 +600,7 @@ function Bar({
     <div>
       <div className="mb-1 flex justify-between gap-2 text-xs">
         <span className={dark ? 'text-white/70' : 'text-slate-600'}>{label}</span>
-        <span className={dark ? 'text-white/45' : 'text-slate-400'}>{value}%</span>
+        <span className={dark ? 'text-white/45' : 'text-slate-500'}>{value}%</span>
       </div>
       <div className={`h-1.5 overflow-hidden rounded-full ${dark ? 'bg-white/10' : 'bg-slate-100'}`}>
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${value}%` }} />
@@ -615,7 +615,7 @@ function PreferenceRadar({ items }: { items: { label: string; weight: number }[]
   const radius = 86
 
   if (items.length === 0) {
-    return <div className="flex h-64 items-center justify-center text-sm text-slate-400">暂无偏好数据</div>
+    return <div className="flex h-64 items-center justify-center text-sm text-slate-500">暂无偏好数据</div>
   }
 
   const points = items

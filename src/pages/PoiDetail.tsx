@@ -98,7 +98,7 @@ export default function PoiDetail() {
   if (!poi) {
     return (
       <AppLayout sidebar={false}>
-        <div className="p-10 text-center text-slate-400">{id && loadedPoiId !== id ? '正在加载地点详情...' : '未找到该地点'}</div>
+        <div className="p-10 text-center text-slate-500">{id && loadedPoiId !== id ? '正在加载地点详情...' : '未找到该地点'}</div>
       </AppLayout>
     )
   }
@@ -168,7 +168,7 @@ export default function PoiDetail() {
   return (
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-[1400px] px-4 pb-20 pt-4 sm:px-5 md:pb-10 lg:px-6 lg:pt-5">
-        <nav aria-label="页面位置" className="mb-3 flex items-center gap-2 text-xs font-medium text-slate-400">
+        <nav aria-label="页面位置" className="mb-3 flex items-center gap-2 text-xs font-medium text-slate-500">
           <button
             type="button"
             onClick={() => navigate('/explore')}
@@ -340,7 +340,7 @@ export default function PoiDetail() {
               <div className="flex items-center gap-1 text-sm">
                 <Star size={16} className="fill-amber-400 text-amber-400" />
                 <span className="font-semibold text-slate-800">{poi.rating}</span>
-                <span className="text-slate-400">/ 5.0</span>
+                <span className="text-slate-500">/ 5.0</span>
               </div>
             </div>
             <div className="mb-5 grid gap-4 rounded-lg border border-slate-100 bg-slate-50 p-4 sm:grid-cols-[120px_minmax(0,1fr)]">
@@ -370,7 +370,7 @@ export default function PoiDetail() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-slate-800">{r.user}</p>
-                      <span className="text-xs text-slate-400">{r.date}</span>
+                      <span className="text-xs text-slate-500">{r.date}</span>
                     </div>
                     <Stars rating={r.rating} size={12} />
                     <p className="mt-1 text-sm text-slate-600">{r.text}</p>
@@ -387,7 +387,7 @@ export default function PoiDetail() {
                       type="button"
                       onClick={() => markUseful(r.id)}
                       className={`-ml-2 mt-2 inline-flex min-h-10 min-w-10 items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs transition-colors ${
-                        liked ? 'bg-brand-50 font-medium text-brand-600' : 'text-slate-400 hover:bg-slate-50 hover:text-brand-600'
+                        liked ? 'bg-brand-50 font-medium text-brand-600' : 'text-slate-500 hover:bg-slate-50 hover:text-brand-600'
                       }`}
                       aria-label={`标记${r.user}的评价有用`}
                     >
@@ -412,7 +412,7 @@ export default function PoiDetail() {
                 <li key={it.label} className="flex items-start gap-3">
                   <it.icon size={16} className="mt-0.5 text-slate-400" />
                   <div>
-                    <p className="text-xs text-slate-400">{it.label}</p>
+                    <p className="text-xs text-slate-500">{it.label}</p>
                     <p className="line-clamp-4 text-sm leading-5 text-slate-700" title={it.value}>{shortText(it.value, it.label === '开放时间' ? 120 : 180)}</p>
                   </div>
                 </li>
@@ -440,7 +440,7 @@ export default function PoiDetail() {
                     <div className="mt-0.5 flex items-center gap-1">
                       <Star size={11} className="fill-amber-400 text-amber-400" />
                       <span className="text-xs text-amber-500">{p.rating}</span>
-                      <span className="text-xs text-slate-400">· {p.distance} km</span>
+                      <span className="text-xs text-slate-500">· {p.distance} km</span>
                     </div>
                   </div>
                 </button>
@@ -501,7 +501,7 @@ export default function PoiDetail() {
                     />
                     <span>
                       <span className="block text-sm font-medium text-slate-700">{trip.title}</span>
-                      <span className="text-xs text-slate-400">{trip.startDate} 至 {trip.endDate}</span>
+                      <span className="text-xs text-slate-500">{trip.startDate} 至 {trip.endDate}</span>
                     </span>
                   </span>
                   {joined && <Tag tone="green">已加入</Tag>}
@@ -542,7 +542,7 @@ function SummaryPill({
         <Icon size={16} aria-hidden="true" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs text-slate-400">{label}</p>
+        <p className="text-xs text-slate-500">{label}</p>
         <p className="mt-0.5 truncate text-sm font-semibold leading-5 text-slate-800" title={value}>{value}</p>
       </div>
     </div>
@@ -632,8 +632,8 @@ function SourcedFactRow({
         <Tag tone={field?.stale ? 'orange' : field?.value == null ? 'gray' : 'green'}>{state}</Tag>
       </div>
       <p className="line-clamp-2 text-sm font-semibold text-slate-800">{value}</p>
-      <p className="mt-1 truncate text-[11px] text-slate-400">{source}</p>
-      {field?.expiresAt && <p className="mt-0.5 truncate text-[11px] text-slate-400">到期：{field.expiresAt}</p>}
+      <p className="mt-1 truncate text-[11px] text-slate-500">{source}</p>
+      {field?.expiresAt && <p className="mt-0.5 truncate text-[11px] text-slate-500">到期：{field.expiresAt}</p>}
     </div>
   )
 }

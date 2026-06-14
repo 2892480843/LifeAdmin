@@ -623,7 +623,7 @@ export default function Explore() {
       <section>
         <div className="mb-2.5 flex items-center justify-between">
           <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">城市</label>
-          <span className="text-xs text-slate-400">{currentCity?.poiCount ?? 0} 个地点</span>
+          <span className="text-xs text-slate-500">{currentCity?.poiCount ?? 0} 个地点</span>
         </div>
 
         <div className="mb-2 grid grid-cols-4 gap-1">
@@ -647,7 +647,7 @@ export default function Explore() {
 
         <div className="flex items-center gap-2 py-1">
           <span className="h-px flex-1 bg-slate-100" />
-          <span className="text-[10px] text-slate-400">其他城市</span>
+          <span className="text-[10px] text-slate-500">其他城市</span>
           <span className="h-px flex-1 bg-slate-100" />
         </div>
 
@@ -664,7 +664,7 @@ export default function Explore() {
       <section>
         <div className="mb-2 flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">分类</p>
-          <span className="text-xs text-slate-400">{activeCats.length ? `${activeCats.length} 项` : '不限'}</span>
+          <span className="text-xs text-slate-500">{activeCats.length ? `${activeCats.length} 项` : '不限'}</span>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {categories.map((category) => {
@@ -724,7 +724,7 @@ export default function Explore() {
           <span className="rounded-md bg-brand-50 px-2 py-1 text-xs font-semibold text-brand-700">{maxDistance} km 内</span>
         </div>
         <Slider value={maxDistance} min={1} max={40} onChange={setMaxDistance} />
-        <div className="mt-2 flex justify-between text-[11px] text-slate-400">
+        <div className="mt-2 flex justify-between text-[11px] text-slate-500">
           <span>近距离</span>
           <span>全城探索</span>
         </div>
@@ -811,14 +811,14 @@ export default function Explore() {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-slate-900">{result.name}</p>
-              <p className="mt-0.5 truncate text-[11px] text-slate-400">{result.address ?? currentCity?.name ?? '当前城市'}</p>
+              <p className="mt-0.5 truncate text-[11px] text-slate-500">{result.address ?? currentCity?.name ?? '当前城市'}</p>
             </div>
             <span className="shrink-0 text-sm font-semibold text-amber-500">{result.rating.toFixed(1)}</span>
           </div>
 
           <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
             <Stars rating={result.rating} size={11} />
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-500">
               {result.reviewCount ? `${result.reviewCount.toLocaleString()} 评` : result.source !== 'local' ? providerResultLabel(result.source) : '暂无评价'}
             </span>
             <span className="rounded-md bg-brand-50 px-1.5 py-0.5 text-[11px] font-medium text-brand-700">{result.category}</span>
@@ -868,7 +868,7 @@ export default function Explore() {
             <Search size={28} className="mb-3 text-slate-200" aria-hidden="true" />
           )}
           <h3 className="text-sm font-semibold text-slate-600">{emptyResultTitle}</h3>
-          <p className="mt-1 text-xs text-slate-400">{emptyResultDescription}</p>
+          <p className="mt-1 text-xs text-slate-500">{emptyResultDescription}</p>
           <button type="button" onClick={resetFilters} className="mt-4 text-sm font-medium text-brand-600 hover:text-brand-700">
             {resetFiltersLabel}
           </button>
@@ -959,7 +959,7 @@ export default function Explore() {
           <div className="sticky top-0 z-10 border-b border-slate-100 bg-white p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-slate-950">{resultPanelTitle}</p>
-              <span className="text-xs text-slate-400">{displayResults.length} 个结果</span>
+              <span className="text-xs text-slate-500">{displayResults.length} 个结果</span>
             </div>
             <p className="mt-1 text-xs text-slate-500">{loadingLocalPois ? '正在加载城市 POI 分片' : resultSourceLabel}</p>
           </div>

@@ -271,14 +271,14 @@ function MapView({
                   aria-label={`选择导航目标 ${it.name}`}
                   aria-pressed={targetItem?.id === it.id}
                 >
-                  <span className="w-10 shrink-0 pt-1 text-xs font-medium text-slate-400">{it.time}</span>
+                  <span className="w-10 shrink-0 pt-1 text-xs font-medium text-slate-500">{it.time}</span>
                   <div className="h-12 w-14 shrink-0 overflow-hidden rounded-lg">
                     <SmartImage src={it.cover} alt={it.name} fallbackText={it.name} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-slate-700">{it.name}</p>
-                    <p className="truncate text-xs text-slate-400">{it.activity}</p>
-                    <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">
+                    <p className="truncate text-xs text-slate-500">{it.activity}</p>
+                    <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
                       <span className="flex items-center gap-0.5"><Clock size={10} /> {it.duration}</span>
                       <span className="flex items-center gap-0.5"><TIcon size={10} /> {it.transport}</span>
                     </div>
@@ -303,7 +303,7 @@ function MapView({
             {stats.map((s) => (
               <div key={s.label} className="flex items-center gap-2">
                 <s.icon size={15} className="text-brand-600" />
-                <span className="text-xs text-slate-400">{s.label}</span>
+                <span className="text-xs text-slate-500">{s.label}</span>
                 <span className="ml-auto text-sm font-medium text-slate-700">{s.value}</span>
               </div>
             ))}
@@ -339,15 +339,15 @@ function MapView({
               <>
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   <div>
-                    <p className="text-slate-400">停留</p>
+                    <p className="text-slate-500">停留</p>
                     <p className="mt-0.5 font-semibold text-slate-700">{targetItem.duration}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400">交通</p>
+                    <p className="text-slate-500">交通</p>
                     <p className="mt-0.5 font-semibold text-slate-700">{targetItem.transport}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400">费用</p>
+                    <p className="text-slate-500">费用</p>
                     <p className="mt-0.5 font-semibold text-slate-700">{targetItem.cost > 0 ? `¥${targetItem.cost}` : '免费'}</p>
                   </div>
                 </div>
@@ -442,14 +442,14 @@ function ListView({
               <tr key={item.id} className="border-b border-slate-100 transition-colors hover:bg-slate-50">
                 <td className="px-4 py-3">
                   <span className="text-sm font-semibold text-slate-900">{item.time}</span>
-                  <p className="mt-0.5 text-xs text-slate-400">第 {item.day} 天</p>
+                  <p className="mt-0.5 text-xs text-slate-500">第 {item.day} 天</p>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <div className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                     <div>
                       <p className="font-medium text-slate-900">{item.name}</p>
-                      <p className="text-xs text-slate-400">{item.transport} 前往</p>
+                      <p className="text-xs text-slate-500">{item.transport} 前往</p>
                     </div>
                   </div>
                 </td>

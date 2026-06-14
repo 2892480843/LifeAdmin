@@ -233,7 +233,7 @@ export default function Dashboard() {
             <div className="border-t border-slate-200 bg-white px-4 py-2.5 sm:px-5">
               <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-center">
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase text-slate-400">主操作区</p>
+                  <p className="text-xs font-semibold uppercase text-slate-500">主操作区</p>
                   <p className="mt-0.5 text-sm text-slate-600">主操作集中在这里，减少首屏分散注意力。</p>
                 </div>
                 <Link to="/new-trip" className="btn-primary min-h-10 justify-center px-4 py-2">
@@ -412,7 +412,7 @@ function MiniStat({ icon: Icon, label, value }: { icon: LucideIcon; label: strin
   return (
     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2.5">
       <Icon size={14} className="text-brand-600" aria-hidden="true" />
-      <p className="mt-1 text-[11px] text-slate-400">{label}</p>
+      <p className="mt-1 text-[11px] text-slate-500">{label}</p>
       <p className="truncate text-sm font-semibold text-slate-800">{value}</p>
     </div>
   )
@@ -559,13 +559,13 @@ function WeatherCard() {
         </div>
         <div className="text-right">
           <div className="text-4xl leading-none" aria-hidden="true">{icon}</div>
-          <p className="mt-1 text-xs text-slate-400">{weather.high}° / {weather.low}°</p>
+          <p className="mt-1 text-xs text-slate-500">{weather.high}° / {weather.low}°</p>
         </div>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2 border-t border-slate-100 pt-3">
         {forecastDays.map((day) => (
           <div key={day.day} className="text-center">
-            <p className="text-xs text-slate-400">{day.day}</p>
+            <p className="text-xs text-slate-500">{day.day}</p>
             <p className="my-1 text-lg leading-none" aria-hidden="true">{weatherIconEmoji[day.icon] ?? '⛅'}</p>
             <p className="text-xs font-semibold text-slate-600">{day.high}°</p>
           </div>

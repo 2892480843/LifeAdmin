@@ -401,7 +401,7 @@ export default function Realtime() {
       <div className="flex min-w-0 xl:h-[calc(100vh-4rem)] xl:overflow-hidden">
         <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-4 xl:block">
           <h2 className="mb-1 text-sm font-semibold text-slate-800">当前行程</h2>
-          <p className="mb-3 text-xs text-slate-400">{activeTrip?.title ?? '暂无当前行程'}</p>
+          <p className="mb-3 text-xs text-slate-500">{activeTrip?.title ?? '暂无当前行程'}</p>
           <Card className="mb-4 bg-brand-50/60 p-3">
             <p className="text-xs text-slate-500">行程进度</p>
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white">
@@ -413,12 +413,12 @@ export default function Realtime() {
             {visibleItems.map((item) => (
               <li key={item.id} className="relative">
                 <span className="absolute -left-[22px] top-1 h-3 w-3 rounded-full border-2 border-white" style={{ backgroundColor: item.color }} />
-                <p className="text-xs font-medium text-slate-400">{item.time}</p>
+                <p className="text-xs font-medium text-slate-500">{item.time}</p>
                 <p className="text-sm text-slate-700">{item.name}</p>
                 <Tag tone={item.status === '已完成' ? 'green' : item.status === '进行中' ? 'blue' : 'gray'} className="mt-0.5">{item.status}</Tag>
               </li>
             ))}
-            {visibleItems.length === 0 && <li className="text-sm text-slate-400">暂无行程节点</li>}
+            {visibleItems.length === 0 && <li className="text-sm text-slate-500">暂无行程节点</li>}
           </ol>
         </aside>
 
@@ -626,7 +626,7 @@ export default function Realtime() {
                       <Tag tone={leg.trafficStatus && leg.trafficStatus !== '畅通' ? 'orange' : 'green'}>{leg.trafficStatus || routeModeLabel[leg.mode]}</Tag>
                     </div>
                     <p className="text-xs text-slate-500">{routeModeLabel[leg.mode]} · {leg.durationText} · {leg.distanceText}</p>
-                    {leg.trafficDescription && <p className="mt-1 text-xs text-slate-400">{leg.trafficDescription}</p>}
+                    {leg.trafficDescription && <p className="mt-1 text-xs text-slate-500">{leg.trafficDescription}</p>}
                   </div>
                 ))}
                 {!snapshot?.route && (
@@ -659,7 +659,7 @@ export default function Realtime() {
                     </div>
                   </div>
                 ))}
-                {sending && <p className="text-xs text-slate-400">助手正在读取实时数据...</p>}
+                {sending && <p className="text-xs text-slate-500">助手正在读取实时数据...</p>}
               </div>
               <div className="flex items-center gap-2 border-t border-slate-100 p-3">
                 <input
@@ -686,7 +686,7 @@ export default function Realtime() {
                     <span className={`absolute -left-[26px] top-1 h-3 w-3 rounded-full border-2 border-white ${logTone[log.type]}`} />
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-slate-800">{log.title}</span>
-                      <span className="text-xs text-slate-400">{log.time}</span>
+                      <span className="text-xs text-slate-500">{log.time}</span>
                     </div>
                     <p className="mt-0.5 text-sm text-slate-500">{log.detail}</p>
                   </li>
@@ -731,7 +731,7 @@ function RealtimeMetric({
   return (
     <div className="metric-tile">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs text-slate-400">{label}</span>
+        <span className="text-xs text-slate-500">{label}</span>
         <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${toneClass}`}>
           <Icon size={16} aria-hidden="true" />
         </span>
@@ -1001,7 +1001,7 @@ function EventCard({ event, onAction }: { event: RealtimeEventItem; onAction: (e
         </div>
       </div>
       <p className="text-sm font-semibold text-slate-800">{event.title}</p>
-      <p className="mt-1 line-clamp-2 text-xs text-slate-400">{event.description}</p>
+      <p className="mt-1 line-clamp-2 text-xs text-slate-500">{event.description}</p>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-600">{event.time} · {event.affectedPoi}</span>
         <span className="rounded-full bg-white px-2 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-slate-200">建议：{meta.action}</span>
@@ -1014,7 +1014,7 @@ function EventCard({ event, onAction }: { event: RealtimeEventItem; onAction: (e
       >
         生成调整方案
       </button>
-      {event.source && <p className="mt-1 text-[11px] text-slate-400">来源：{event.source}</p>}
+      {event.source && <p className="mt-1 text-[11px] text-slate-500">来源：{event.source}</p>}
     </Card>
   )
 }
@@ -1178,7 +1178,7 @@ function RecommendationCard({ recommendation, loading }: { recommendation: Realt
 function RecommendationRiskList({ risks }: { risks: RealtimeRecommendationRisk[] }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">风险项</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">风险项</p>
       {risks.length === 0 ? (
         <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">暂无实时风险分析。</div>
       ) : (
@@ -1192,7 +1192,7 @@ function RecommendationRiskList({ risks }: { risks: RealtimeRecommendationRisk[]
                 </div>
                 <Tag tone={risk.level === '高' ? 'red' : risk.level === '中' ? 'orange' : 'gray'}>{risk.level}</Tag>
               </div>
-              <p className="mt-2 text-[11px] text-slate-400">类型：{riskTypeLabel(risk.type)}</p>
+              <p className="mt-2 text-[11px] text-slate-500">类型：{riskTypeLabel(risk.type)}</p>
             </div>
           ))}
         </div>
@@ -1204,7 +1204,7 @@ function RecommendationRiskList({ risks }: { risks: RealtimeRecommendationRisk[]
 function RecommendationActionList({ actions }: { actions: RealtimeRecommendationAction[] }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">可执行动作</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">可执行动作</p>
       {actions.length === 0 ? (
         <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">暂无可展示动作。</div>
       ) : (

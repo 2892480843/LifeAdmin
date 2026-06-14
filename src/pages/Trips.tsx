@@ -172,7 +172,7 @@ export default function Trips() {
                       aria-label={`切换到${item}行程`}
                       aria-pressed={tab === item}
                     >
-                      {item} <span className={tab === item ? 'text-white/75' : 'text-slate-400'}>{counts[item]}</span>
+                      {item} <span className={tab === item ? 'text-white/75' : 'text-slate-500'}>{counts[item]}</span>
                     </button>
                   ))}
                 </div>
@@ -185,7 +185,7 @@ export default function Trips() {
                   <MapPin size={28} className="text-slate-300" aria-hidden="true" />
                 </div>
                 <h3 className="text-base font-semibold text-slate-600">暂无行程</h3>
-                <p className="mt-1 text-sm text-slate-400">还没有创建任何行程，去规划你的第一次出发吧</p>
+                <p className="mt-1 text-sm text-slate-500">还没有创建任何行程，去规划你的第一次出发吧</p>
                 <Link to="/new-trip" className="btn-primary mt-5 px-6 py-2.5 text-sm">
                   <Plus size={16} /> 新建行程
                 </Link>
@@ -326,7 +326,7 @@ function TripAssetRow({
 
         <div className="flex flex-col justify-between border-t border-slate-100 p-4 lg:border-l lg:border-t-0">
           <div>
-            <p className="text-xs font-semibold uppercase text-slate-400">下一步操作</p>
+            <p className="text-xs font-semibold uppercase text-slate-500">下一步操作</p>
             <p className="mt-1 text-sm font-semibold text-slate-800">{meta.action}</p>
             <p className="mt-1 text-xs leading-5 text-slate-500">{meta.desc}</p>
           </div>

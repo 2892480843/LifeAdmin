@@ -117,7 +117,7 @@ export default function Sidebar() {
       <nav className="flex-1 space-y-6">
         {groups.map((group) => (
           <div key={group.title}>
-            <p className="px-3 pb-2 text-xs font-semibold text-slate-400">{group.title}</p>
+            <p className="px-3 pb-2 text-xs font-semibold text-slate-500">{group.title}</p>
             <ul className="space-y-1">
               {group.items.map((item) => (
                 <li key={item.label + item.path}>
@@ -195,7 +195,7 @@ export default function Sidebar() {
               <p className="mt-1 text-sm leading-6 text-slate-600">当前弹窗不会发起真实支付；你可以先查看权益，再到 AI 设置里调整推荐强度与自动化能力。</p>
             </div>
             <div className="rounded-lg border border-white/80 bg-white p-3">
-              <p className="text-xs font-medium text-slate-400">今日额度</p>
+              <p className="text-xs font-medium text-slate-500">今日额度</p>
               <p className="mt-1 text-2xl font-semibold text-brand-700">{membershipUsage.remaining}</p>
               <p className="text-xs text-slate-500">剩余 / 共 {membershipUsage.total} 次</p>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
@@ -207,7 +207,7 @@ export default function Sidebar() {
           <section>
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-sm font-semibold text-slate-900">核心权益</h3>
-              <span className="text-xs text-slate-400">覆盖规划、预警、画像与协作</span>
+              <span className="text-xs text-slate-500">覆盖规划、预警、画像与协作</span>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {membershipBenefits.map((benefit) => (
@@ -227,7 +227,7 @@ export default function Sidebar() {
           <section>
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-sm font-semibold text-slate-900">套餐对比</h3>
-              <span className="text-xs text-slate-400">当前方案与可升级能力</span>
+              <span className="text-xs text-slate-500">当前方案与可升级能力</span>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {membershipPlans.map((plan) => (

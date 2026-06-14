@@ -19,7 +19,7 @@ export default function StepIndicator({ current }: { current: number }) {
                       ? 'bg-brand-600 text-white'
                     : active
                       ? 'node-pulse bg-brand-600 text-white ring-4 ring-brand-100'
-                      : 'border-slate-300 bg-white text-slate-400'
+                      : 'border-slate-300 bg-white text-slate-500'
                   }`}
                   aria-current={active ? 'step' : undefined}
                 >
@@ -27,7 +27,7 @@ export default function StepIndicator({ current }: { current: number }) {
                 </span>
                 <span
                   className={`hidden text-sm font-medium sm:inline ${
-                    active ? 'text-brand-700' : done ? 'text-slate-800' : 'text-slate-400'
+                    active ? 'text-brand-700' : done ? 'text-slate-800' : 'text-slate-500'
                   }`}
                 >
                   {label}

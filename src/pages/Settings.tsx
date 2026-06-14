@@ -196,7 +196,7 @@ function Panel({ title, desc, children }: { title: string; desc?: string; childr
     <Card className="setting-panel p-5 sm:p-6">
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
-        {desc && <p className="mt-0.5 text-sm text-slate-400">{desc}</p>}
+        {desc && <p className="mt-0.5 text-sm text-slate-500">{desc}</p>}
       </div>
       {children}
     </Card>
@@ -219,7 +219,7 @@ function ToggleRow({
     <div className="os-row mb-2 flex items-center justify-between gap-4 px-3 py-3 last:mb-0">
       <div className="min-w-0">
         <p className="text-sm font-medium text-slate-700">{title}</p>
-        {desc && <p className="mt-0.5 text-xs text-slate-400">{desc}</p>}
+        {desc && <p className="mt-0.5 text-xs text-slate-500">{desc}</p>}
       </div>
       <Toggle checked={value} onChange={onChange} ariaLabel={`切换${title}`} />
     </div>
@@ -377,7 +377,7 @@ function ProfileSection({
         </div>
         <div>
           <p className="text-sm font-medium text-slate-700">{user?.name}</p>
-          <p className="text-xs text-slate-400">{user?.level} · 加入于 {user?.joinedAt}</p>
+          <p className="text-xs text-slate-500">{user?.level} · 加入于 {user?.joinedAt}</p>
           <button type="button" onClick={changeAvatar} className="mt-1.5 text-xs text-brand-600 hover:underline" aria-label="更换头像">更换头像</button>
         </div>
       </div>
@@ -493,7 +493,7 @@ function SecuritySection({ onToast }: { onToast: (message: string) => void }) {
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><KeyRound size={17} /></span>
               <div>
                 <p className="text-sm font-medium text-slate-700">登录密码</p>
-                <p className="text-xs text-slate-400">上次修改于 3 个月前</p>
+                <p className="text-xs text-slate-500">上次修改于 3 个月前</p>
               </div>
             </div>
             <button onClick={() => setPasswordOpen(true)} className="btn-ghost px-4 py-2 text-sm" aria-label="修改登录密码">修改</button>
@@ -514,7 +514,7 @@ function SecuritySection({ onToast }: { onToast: (message: string) => void }) {
                     {d.name}
                     {d.active && <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-600">当前</span>}
                   </p>
-                  <p className="text-xs text-slate-400">{d.loc}</p>
+                  <p className="text-xs text-slate-500">{d.loc}</p>
                 </div>
               </div>
               {!d.active && <button onClick={() => setRemovingDevice(d.name)} className="text-xs text-rose-500 hover:underline" aria-label={`移除设备${d.name}`}>移除</button>}
@@ -638,8 +638,8 @@ function PreferenceSection() {
             <span className="text-sm font-medium text-slate-600">默认单日预算</span>
             <span className="text-sm font-semibold text-brand-600">¥{settings.budget}</span>
           </div>
-          <Slider value={settings.budget} min={300} max={5000} step={100} onChange={setPreference('budget')} />
-          <div className="mt-1 flex justify-between text-xs text-slate-400">
+         <Slider value={settings.budget} min={300} max={5000} step={100} onChange={setPreference('budget')} />
+          <div className="mt-1 flex justify-between text-xs text-slate-500">
             <span>¥300</span>
             <span>¥5000</span>
           </div>
@@ -870,8 +870,8 @@ function AiSection({ onToast }: { onToast: (message: string) => void }) {
             onChange={setAiIntensity}
             ariaLabel="调整个性化推荐强度"
           />
-          <div className="mt-1 flex justify-between text-xs text-slate-400">
-            <span>多样探索</span>
+          <div className="mt-1 flex justify-between text-xs text-slate-500">
+           <span>多样探索</span>
             <span className="font-semibold text-brand-600">{aiIntensity}%</span>
             <span>高度个性化</span>
           </div>

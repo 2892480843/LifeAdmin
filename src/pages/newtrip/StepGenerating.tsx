@@ -94,7 +94,7 @@ export default function StepGenerating({ onDone }: { onDone: (plans: RoutePlan[]
               ) : (
                 <div className="h-5 w-5 shrink-0 rounded-full border-2 border-slate-200" />
               )}
-              <span className={`text-sm ${index < currentStep ? 'text-slate-600' : index === currentStep ? 'font-medium text-brand-700' : 'text-slate-400'}`}>
+              <span className={`text-sm ${index < currentStep ? 'text-slate-600' : index === currentStep ? 'font-medium text-brand-700' : 'text-slate-500'}`}>
                 {step}
               </span>
             </div>
@@ -112,10 +112,10 @@ export default function StepGenerating({ onDone }: { onDone: (plans: RoutePlan[]
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="mt-3 text-center text-xs text-slate-400">预计剩余 {remaining} 秒</p>
+          <p className="mt-3 text-center text-xs text-slate-500">预计剩余 {remaining} 秒</p>
         </div>
 
-        <p className="mx-auto mt-8 max-w-md text-center text-xs leading-5 text-slate-400">
+        <p className="mx-auto mt-8 max-w-md text-center text-xs leading-5 text-slate-500">
           系统正在综合您的偏好数据，为您制定最合适的旅行路线。结果仅供参考，实际情况请以景区官方信息为准。
         </p>
       </div>

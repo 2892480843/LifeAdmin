@@ -78,7 +78,7 @@ npm run dev
 
 浏览器访问 [http://localhost:5173](http://localhost:5173)，使用演示账号登录：
 
-> 账号：`demo@routewise.app` 密码：`demo123456`
+> 账号：`traveler01@example.com` 密码：`routewise2024`
 
 ### 常用检查命令
 

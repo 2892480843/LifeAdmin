@@ -26,7 +26,7 @@ export default function BottomNav() {
             <span className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition-all ${
               isActive
                 ? 'bg-brand-50 text-brand-600'
-                : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
             }`}>
               <tab.icon
                 size={21}

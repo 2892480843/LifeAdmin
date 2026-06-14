@@ -169,7 +169,7 @@ export function MetricTile({
         </div>
         {trend && <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold ${toneClass.soft} ${toneClass.text}`}>{trend}</span>}
       </div>
-      {detail && <p className="mt-2 truncate text-xs text-slate-400">{detail}</p>}
+      {detail && <p className="mt-2 truncate text-xs text-slate-500">{detail}</p>}
     </div>
   )
 }
@@ -228,11 +228,11 @@ export function RouteNodeRail({
               }`}
             >
               <div className="flex min-w-0 items-center gap-2">
-                {node.time && <span className="shrink-0 text-xs font-medium text-slate-400">{node.time}</span>}
+                {node.time && <span className="shrink-0 text-xs font-medium text-slate-500">{node.time}</span>}
                 <span className="truncate text-sm font-semibold text-slate-800">{node.label}</span>
               </div>
               {node.meta && <div className="mt-0.5 truncate text-xs text-slate-500">{node.meta}</div>}
-              {node.status && <div className="mt-1 text-[11px] text-slate-400">{node.status}</div>}
+              {node.status && <div className="mt-1 text-[11px] text-slate-500">{node.status}</div>}
             </button>
           </li>
         )
@@ -377,7 +377,7 @@ export function RouteMiniMap({
   if (!nodes.length) {
     return (
       <div className={`${surfaceClass} route-scan-line flex items-center justify-center ${className}`}>
-        <p className={`text-xs ${dark ? 'text-white/55' : 'text-slate-400'}`}>暂无路线节点</p>
+        <p className={`text-xs ${dark ? 'text-white/55' : 'text-slate-500'}`}>暂无路线节点</p>
       </div>
     )
   }
@@ -457,7 +457,7 @@ export function RouteMiniMap({
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-600" />
             <span className="truncate">{nodes[0].label}</span>
           </span>
-          <span className={`shrink-0 text-[10px] font-medium ${dark ? 'text-white/45' : 'text-slate-400'}`}>{nodes.length} 节点</span>
+          <span className={`shrink-0 text-[10px] font-medium ${dark ? 'text-white/45' : 'text-slate-500'}`}>{nodes.length} 节点</span>
           <span className={`inline-flex max-w-[46%] items-center gap-1.5 rounded-full border px-2 py-1 text-[10px] font-semibold shadow-sm backdrop-blur ${chipClass}`}>
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-locate-500" />
             <span className="truncate">{nodes[nodes.length - 1].label}</span>

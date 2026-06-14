@@ -99,7 +99,7 @@ function MobileDraftSummary({
     <details className="command-surface group 2xl:hidden">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase text-slate-400">草稿摘要</p>
+          <p className="text-xs font-semibold uppercase text-slate-500">草稿摘要</p>
           <p className="mt-1 truncate text-sm font-semibold text-slate-900">
             {draft.cityName || '未设置旅行城市'} · {draft.days} 天 · ¥{draft.budget}
           </p>
@@ -187,7 +187,7 @@ function Signal({ icon: Icon, label, value }: { icon: LucideIcon; label: string;
         <Icon size={16} aria-hidden="true" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs text-slate-400">{label}</p>
+        <p className="text-xs text-slate-500">{label}</p>
         <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">{value}</p>
       </div>
     </div>

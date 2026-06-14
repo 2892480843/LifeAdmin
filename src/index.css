@@ -141,7 +141,7 @@ button {
   }
 
   .section-eyebrow {
-    @apply text-xs font-bold uppercase tracking-normal text-slate-400;
+    @apply text-xs font-bold uppercase tracking-normal text-slate-500;
   }
 
   .sidebar-rail {

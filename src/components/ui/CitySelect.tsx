@@ -209,7 +209,7 @@ export default function CitySelect({
               ) : (
                 <span className="truncate text-sm font-semibold text-slate-700">选择省份 / 直辖市</span>
               )}
-              <span className="shrink-0 text-sm text-slate-400">
+              <span className="shrink-0 text-sm text-slate-500">
                 {activeProvince
                   ? `${visibleProvinceCities.length} 个城市`
                   : normalizedQuery
@@ -272,7 +272,7 @@ export default function CitySelect({
             )}
 
             {!showCustomOption && emptyResults && (
-              <p className="px-4 py-8 text-center text-sm text-slate-400">未找到匹配城市</p>
+              <p className="px-4 py-8 text-center text-sm text-slate-500">未找到匹配城市</p>
             )}
           </div>
         </div>,
@@ -300,7 +300,7 @@ export default function CitySelect({
         <Icon size={16} className="shrink-0 text-slate-400" aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium text-slate-800">{selectedLabel}</span>
-          {selectedMeta && <span className="block truncate text-[11px] text-slate-400">{selectedMeta}</span>}
+          {selectedMeta && <span className="block truncate text-[11px] text-slate-500">{selectedMeta}</span>}
         </span>
         <ChevronDown
           size={16}
@@ -334,8 +334,8 @@ function CityOptionButton({
       }`}
     >
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-base font-semibold">{label}</span>
-        <span className="mt-0.5 block truncate text-sm text-slate-400">{meta}</span>
+       <span className="block truncate text-base font-semibold">{label}</span>
+        <span className="mt-0.5 block truncate text-sm text-slate-500">{meta}</span>
       </span>
       {active && <Check size={15} className="shrink-0 text-brand-600" aria-hidden="true" />}
     </button>
@@ -365,8 +365,8 @@ function ProvinceOptionButton({
       }`}
     >
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-base font-semibold">{province.name}</span>
-        <span className="mt-0.5 block truncate text-sm text-slate-400">{meta}</span>
+       <span className="block truncate text-base font-semibold">{province.name}</span>
+        <span className="mt-0.5 block truncate text-sm text-slate-500">{meta}</span>
       </span>
       {active ? (
         <Check size={15} className="shrink-0 text-brand-600" aria-hidden="true" />

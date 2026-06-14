@@ -163,7 +163,7 @@ export default function TopNav() {
                   {noticeError ? (
                     <p className="px-4 py-5 text-sm text-amber-600">{noticeError}</p>
                   ) : noticeLoading && notices.length === 0 ? (
-                    <p className="px-4 py-5 text-sm text-slate-400">正在同步后端通知...</p>
+                    <p className="px-4 py-5 text-sm text-slate-500">正在同步后端通知...</p>
                   ) : notices.length > 0 ? (
                     notices.map((notice) => (
                       <button
@@ -174,11 +174,11 @@ export default function TopNav() {
                         className="block w-full px-4 py-3 text-left hover:bg-slate-50"
                       >
                         <p className="text-sm font-medium text-slate-700">{notice.title}</p>
-                        <p className="mt-0.5 text-xs leading-5 text-slate-400">{notice.desc}</p>
+                        <p className="mt-0.5 text-xs leading-5 text-slate-500">{notice.desc}</p>
                       </button>
                     ))
                   ) : (
-                    <p className="px-4 py-5 text-sm text-slate-400">暂无与当前账号相关的系统通知。</p>
+                    <p className="px-4 py-5 text-sm text-slate-500">暂无与当前账号相关的系统通知。</p>
                   )}
                 </div>
               </div>

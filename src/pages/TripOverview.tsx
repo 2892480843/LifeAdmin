@@ -158,7 +158,7 @@ export default function TripOverview() {
           <div className="mt-4 border-t border-slate-100 pt-4">
             <div className="mb-2 flex items-center justify-between gap-3">
               <p className="text-sm font-semibold text-slate-900">关键检查点</p>
-              <span className="text-xs text-slate-400">{trip.checkpoints.length} 个触发点</span>
+              <span className="text-xs text-slate-500">{trip.checkpoints.length} 个触发点</span>
             </div>
             <CheckpointStrip items={trip.checkpoints} />
           </div>
@@ -185,7 +185,7 @@ export default function TripOverview() {
               <span className="text-sm text-amber-500">满意度 {selectedPlan.satisfaction}%</span>
             </div>
             <p className="mt-2 text-sm text-slate-500">{selectedPlan.summary}</p>
-            <p className="mt-2 text-xs text-slate-400">{selectedPlan.stops.map((stop) => stop.name).join(' → ')}</p>
+            <p className="mt-2 text-xs text-slate-500">{selectedPlan.stops.map((stop) => stop.name).join(' → ')}</p>
           </Card>
         )}
 
@@ -222,7 +222,7 @@ export default function TripOverview() {
                       </span>
                       <div>
                         <p className="text-sm font-semibold text-slate-800">第 {day.day} 天 · {day.title}</p>
-                        <p className="text-xs text-slate-400">{day.date}</p>
+                        <p className="text-xs text-slate-500">{day.date}</p>
                       </div>
                     </div>
                     <ol className="relative space-y-3 border-l border-dashed border-slate-200 pl-4">
@@ -239,10 +239,10 @@ export default function TripOverview() {
                             className="flex w-full items-start gap-2 rounded-lg p-1.5 text-left hover:bg-slate-50"
                             aria-label={`查看行程节点 ${it.name}`}
                           >
-                            <span className="text-xs font-medium text-slate-400">{it.time}</span>
+                            <span className="text-xs font-medium text-slate-500">{it.time}</span>
                             <div className="min-w-0 flex-1">
                               <p className="truncate text-sm font-medium text-slate-700">{it.name}</p>
-                              <p className="truncate text-xs text-slate-400">{it.activity}</p>
+                              <p className="truncate text-xs text-slate-500">{it.activity}</p>
                             </div>
                           </button>
                         </li>
@@ -293,7 +293,7 @@ export default function TripOverview() {
                     />
                     <label
                       htmlFor={`cp-${i}`}
-                      className={`cursor-pointer select-none ${checkedCps.has(i) ? 'text-slate-400 line-through' : ''}`}
+                      className={`cursor-pointer select-none ${checkedCps.has(i) ? 'text-slate-500 line-through' : ''}`}
                     >
                       {c}
                     </label>

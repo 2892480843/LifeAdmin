@@ -77,7 +77,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
                   aria-selected={active}
                 >
                   <span>{filter.label}</span>
-                  <span className="hidden text-xs font-normal text-slate-400 2xl:inline">{filter.desc}</span>
+                  <span className="hidden text-xs font-normal text-slate-500 2xl:inline">{filter.desc}</span>
                 </button>
               )
             })}
@@ -89,7 +89,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
         <div className="route-plan-list">
           {visiblePlans.length === 0 && (
             <div className="col-span-full py-12 text-center">
-              <p className="text-sm text-slate-400">暂无可用方案</p>
+              <p className="text-sm text-slate-500">暂无可用方案</p>
             </div>
           )}
           {visiblePlans.map((plan) => {
@@ -140,7 +140,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
                     ].map((item) => (
                       <div key={item.label} className="min-w-0">
                         <p className="truncate text-sm font-semibold text-slate-950">{item.value}</p>
-                        <p className="text-xs text-slate-400">{item.label}</p>
+                        <p className="text-xs text-slate-500">{item.label}</p>
                       </div>
                     ))}
                   </div>
@@ -187,7 +187,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
                   { label: '满意度', value: `${selectedPlan.satisfaction}%` },
                 ].map((item) => (
                   <div key={item.label} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
-                    <p className="text-xs text-slate-400">{item.label}</p>
+                    <p className="text-xs text-slate-500">{item.label}</p>
                     <p className="mt-0.5 text-sm font-semibold text-slate-900">{item.value}</p>
                   </div>
                 ))}
@@ -197,7 +197,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-slate-800">路线节点</p>
-                    <span className="text-xs text-slate-400">{selectedPlan.stops.length} 站</span>
+                    <span className="text-xs text-slate-500">{selectedPlan.stops.length} 站</span>
                   </div>
                   <div className="max-h-[34rem] space-y-2 overflow-y-auto pr-1">
                     {selectedPlan.stops.map((stop, index) => (
@@ -208,7 +208,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
                         <SmartImage src={stop.cover} alt={stop.name} fallbackText={stop.name} className="h-11 w-14 rounded-md object-cover" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium text-slate-800">{stop.name}</p>
-                          <p className="text-xs text-slate-400">第 {stop.order} 站</p>
+                          <p className="text-xs text-slate-500">第 {stop.order} 站</p>
                         </div>
                       </div>
                     ))}

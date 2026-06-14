@@ -147,7 +147,7 @@ export default function DatePicker({
           <div className="border-b border-slate-100 bg-slate-50/80 px-3.5 py-3">
             <div className="flex min-h-10 items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-normal text-slate-400">日历</p>
+                <p className="text-[11px] font-bold uppercase tracking-normal text-slate-500">日历</p>
                 <h3 id={titleId} className="mt-0.5 truncate text-base font-semibold text-slate-950">
                   {formatMonthLabel(viewMonth)}
                 </h3>
@@ -176,7 +176,7 @@ export default function DatePicker({
           <div className="px-3.5 pb-3.5 pt-3">
             <div className="grid grid-cols-7 gap-1">
               {weekDays.map((day) => (
-                <div key={day} className="flex h-8 items-center justify-center text-xs font-semibold text-slate-400">
+                <div key={day} className="flex h-8 items-center justify-center text-xs font-semibold text-slate-500">
                   {day}
                 </div>
               ))}
@@ -237,7 +237,7 @@ export default function DatePicker({
         onClick={() => setOpen((current) => !current)}
       >
         <CalendarDays size={16} className="shrink-0 text-slate-400" aria-hidden="true" />
-        <span className={`min-w-0 flex-1 truncate py-2.5 text-sm ${value ? 'text-slate-900' : 'text-slate-400'}`}>
+        <span className={`min-w-0 flex-1 truncate py-2.5 text-sm ${value ? 'text-slate-900' : 'text-slate-500'}`}>
           {displayValue}
         </span>
         <ChevronDown
