@@ -301,7 +301,44 @@ function SaveBar({
   )
 }
 
-type ProfileForm = Pick<User, 'name' | 'email' | 'phone' | 'bio'> & { city: string }
+type ProfileForm = Pick<User, 'name' | 'email' | 'phone' | 'bio' | 'avatar'> & { city: string }
+
+// 头像原图上限：超过则直接拒绝，避免内存与解码压力
+const AVATAR_MAX_BYTES = 4 * 1024 * 1024
+// 头像输出尺寸（正方形），压缩为 JPEG 后通常 < 50KB，可安全写入 localStorage
+const AVATAR_OUTPUT_SIZE = 256
+
+// 将图片文件读取并压缩为正方形 JPEG data URL，确保可跨刷新持久化
+async function fileToAvatarDataUrl(file: File): Promise<string> {
+  const rawDataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = () => reject(new Error('read-failed'))
+    reader.readAsDataURL(file)
+  })
+
+  return new Promise<string>((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = AVATAR_OUTPUT_SIZE
+      canvas.height = AVATAR_OUTPUT_SIZE
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        resolve(rawDataUrl)
+        return
+      }
+      // 居中裁剪为正方形，避免拉伸变形
+      const side = Math.min(img.width, img.height)
+      const sx = (img.width - side) / 2
+      const sy = (img.height - side) / 2
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, AVATAR_OUTPUT_SIZE, AVATAR_OUTPUT_SIZE)
+      resolve(canvas.toDataURL('image/jpeg', 0.85))
+    }
+    img.onerror = () => resolve(rawDataUrl)
+    img.src = rawDataUrl
+  })
+}
 
 function ProfileSection({
   user,

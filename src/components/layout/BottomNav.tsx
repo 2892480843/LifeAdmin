@@ -2,11 +2,11 @@ import { NavLink } from 'react-router-dom'
 import { Compass, LayoutDashboard, MapPin, Radio, User } from 'lucide-react'
 
 const tabs = [
-  { to: '/dashboard', icon: LayoutDashboard, label: '首页' },
-  { to: '/trips', icon: MapPin, label: '行程' },
-  { to: '/explore', icon: Compass, label: '探索' },
-  { to: '/realtime', icon: Radio, label: '动态' },
-  { to: '/profile', icon: User, label: '我的' },
+  { to: '/mobile', icon: LayoutDashboard, label: '首页', end: true },
+  { to: '/mobile/trips', icon: MapPin, label: '行程' },
+  { to: '/mobile/explore', icon: Compass, label: '探索' },
+  { to: '/mobile/realtime', icon: Radio, label: '动态' },
+  { to: '/mobile/profile', icon: User, label: '我的' },
 ]
 
 export default function BottomNav() {
@@ -19,6 +19,7 @@ export default function BottomNav() {
         <NavLink
           key={tab.to}
           to={tab.to}
+          end={tab.end}
           className="flex flex-1 flex-col items-center py-1.5"
           aria-label={tab.label}
         >

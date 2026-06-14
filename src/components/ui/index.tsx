@@ -4,6 +4,35 @@ import { AlertTriangle, CheckCircle2, Info, X } from 'lucide-react'
 
 export { default as CitySelect } from './CitySelect'
 export { default as DatePicker } from './DatePicker'
+export { Skeleton, SkeletonText }
+
+// 骨架占位块：加载/占位状态用，支持圆角与宽高自定义
+function Skeleton({
+  className = '',
+  rounded = 'rounded-lg',
+}: {
+  className?: string
+  rounded?: string
+}) {
+  return <div className={`animate-pulse bg-slate-200/70 ${rounded} ${className}`} aria-hidden="true" />
+}
+
+// 骨架文本行：模拟段落占位
+function SkeletonText({
+  lines = 3,
+  className = '',
+}: {
+  lines?: number
+  className?: string
+}) {
+  return (
+    <div className={`space-y-2 ${className}`} aria-hidden="true">
+      {Array.from({ length: lines }).map((_, i) => (
+        <div key={i} className="skeleton-line" style={{ width: i === lines - 1 ? '70%' : '100%' }} />
+      ))}
+    </div>
+  )
+}
 
 // 通用卡片容器
 export function Card({

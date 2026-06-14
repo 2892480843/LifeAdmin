@@ -14,6 +14,11 @@ const TripDetail = lazy(() => import('./pages/TripDetail'))
 const Realtime = lazy(() => import('./pages/Realtime'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Settings = lazy(() => import('./pages/Settings'))
+const MobileHome = lazy(() => import('./pages/MobileHome'))
+const MobileProfile = lazy(() => import('./pages/MobileProfile'))
+const MobileTrips = lazy(() => import('./pages/MobileTrips'))
+const MobileExplore = lazy(() => import('./pages/MobileExplore'))
+const MobileRealtime = lazy(() => import('./pages/MobileRealtime'))
 
 // 登录守卫
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -24,15 +29,22 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 export default function App() {
   const { isAuthed } = useApp()
+  // 移动端窄屏走 /mobile 首页，桌面走 /dashboard
+  const homePath = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches ? '/mobile' : '/dashboard'
 
   return (
     <AppErrorBoundary>
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route path="/login" element={isAuthed ? <Navigate to="/dashboard" replace /> : <Login />} />
-          <Route path="/" element={<Navigate to={isAuthed ? '/dashboard' : '/login'} replace />} />
+          <Route path="/login" element={isAuthed ? <Navigate to={homePath} replace /> : <Login />} />
+          <Route path="/" element={<Navigate to={isAuthed ? homePath : '/login'} replace />} />
 
           <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/mobile" element={<RequireAuth><MobileHome /></RequireAuth>} />
+          <Route path="/mobile/profile" element={<RequireAuth><MobileProfile /></RequireAuth>} />
+          <Route path="/mobile/trips" element={<RequireAuth><MobileTrips /></RequireAuth>} />
+          <Route path="/mobile/explore" element={<RequireAuth><MobileExplore /></RequireAuth>} />
+          <Route path="/mobile/realtime" element={<RequireAuth><MobileRealtime /></RequireAuth>} />
           <Route path="/new-trip" element={<RequireAuth><NewTrip /></RequireAuth>} />
           <Route path="/explore" element={<RequireAuth><Explore /></RequireAuth>} />
           <Route path="/poi/:id" element={<RequireAuth><PoiDetail /></RequireAuth>} />

@@ -244,7 +244,7 @@ export default function TopNav() {
         </div>
       </header>
 
-      <nav className="sticky top-16 z-20 border-b border-slate-200/80 bg-white/95 px-2 py-2 backdrop-blur lg:hidden">
+      <nav className="sticky top-16 z-20 hidden border-b border-slate-200/80 bg-white/95 px-2 py-2 backdrop-blur md:block lg:hidden">
         <div className="mx-auto flex max-w-xl gap-1">
           {navItems.map((item) => {
             const active = isActive(item.path)
