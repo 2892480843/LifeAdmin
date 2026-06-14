@@ -270,8 +270,8 @@ export default function PoiDetail() {
                   <Route size={19} />
                 </span>
                 <div className="min-w-0">
-                  <p className="section-eyebrow">AI Route Fit</p>
-                  <h2 className="mt-1 text-base font-semibold text-slate-950">适合加入：城市地标 / 摄影观景 / 轻量 CityWalk</h2>
+                  <p className="section-eyebrow">AI 路线匹配</p>
+                  <h2 className="mt-1 text-base font-semibold text-slate-950">适合加入：城市地标 / 摄影观景 / 轻量城市漫步</h2>
                   <p className="mt-1 text-sm leading-6 text-slate-600">
                     该地点距离现有上海核心路线较近，适合放在上午开场或傍晚观景段。若当天有排队或天气波动，建议作为可替换节点保留。
                   </p>
@@ -595,7 +595,7 @@ function DianpingSourcePanel({
     <Card className="p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <p className="section-eyebrow">Dianping Source</p>
+          <p className="section-eyebrow">评价来源</p>
           <h3 className="text-base font-semibold text-slate-800">大众点评口碑来源</h3>
         </div>
         <Tag tone={detail?.ok ? 'green' : 'gray'}>{detail?.status ?? '读取中'}</Tag>
@@ -633,7 +633,7 @@ function SourcedFactRow({
       </div>
       <p className="line-clamp-2 text-sm font-semibold text-slate-800">{value}</p>
       <p className="mt-1 truncate text-[11px] text-slate-400">{source}</p>
-      {field?.expiresAt && <p className="mt-0.5 truncate text-[11px] text-slate-400">expiresAt {field.expiresAt}</p>}
+      {field?.expiresAt && <p className="mt-0.5 truncate text-[11px] text-slate-400">到期：{field.expiresAt}</p>}
     </div>
   )
 }

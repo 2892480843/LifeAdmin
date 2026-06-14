@@ -147,7 +147,7 @@ export default function DatePicker({
           <div className="border-b border-slate-100 bg-slate-50/80 px-3.5 py-3">
             <div className="flex min-h-10 items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-normal text-slate-400">Calendar</p>
+                <p className="text-[11px] font-bold uppercase tracking-normal text-slate-400">日历</p>
                 <h3 id={titleId} className="mt-0.5 truncate text-base font-semibold text-slate-950">
                   {formatMonthLabel(viewMonth)}
                 </h3>

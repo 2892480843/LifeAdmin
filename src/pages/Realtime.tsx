@@ -425,7 +425,7 @@ export default function Realtime() {
         <div className="min-w-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5 lg:px-6 lg:py-6">
           <div className="mb-5">
             <RoutePageHeader
-              eyebrow="Realtime Operations"
+              eyebrow="实时监控"
               title="实时动态与智能调整"
               description={snapshot?.ok ? '实时数据来自高德地图、路径规划、交通态势与天气接口。' : statusDescription(status)}
               status={<RealtimeStatusTag status={status} loading={loading} />}
@@ -454,7 +454,7 @@ export default function Realtime() {
           </div>
 
           <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <RealtimeMetric icon={Route} label="行程进度" value={activeDay ? `第${activeDay.day}天 Day ${activeDay.day}` : '暂无行程'} detail={`共${activeTrip?.days ?? 0}天行程`} tone="brand" />
+            <RealtimeMetric icon={Route} label="行程进度" value={activeDay ? `第 ${activeDay.day} 天` : '暂无行程'} detail={`共${activeTrip?.days ?? 0}天行程`} tone="brand" />
             <RealtimeMetric icon={MapPin} label="当前节点" value={currentNode?.name ?? '暂无节点'} detail={currentNode ? `预计停留 ${currentNode.duration}` : '请先创建行程'} tone="locate" />
             <div id="weather-status" className="scroll-mt-28">
               <RealtimeMetric
@@ -1178,7 +1178,7 @@ function RecommendationCard({ recommendation, loading }: { recommendation: Realt
 function RecommendationRiskList({ risks }: { risks: RealtimeRecommendationRisk[] }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Risks</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">风险项</p>
       {risks.length === 0 ? (
         <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">暂无实时风险分析。</div>
       ) : (
@@ -1204,7 +1204,7 @@ function RecommendationRiskList({ risks }: { risks: RealtimeRecommendationRisk[]
 function RecommendationActionList({ actions }: { actions: RealtimeRecommendationAction[] }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Actions</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">可执行动作</p>
       {actions.length === 0 ? (
         <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">暂无可展示动作。</div>
       ) : (

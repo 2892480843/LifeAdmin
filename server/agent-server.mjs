@@ -112,6 +112,13 @@ const CATEGORY_SEARCH_TERMS = {
 }
 const rateLimitBuckets = new Map()
 const amapCache = new Map()
+
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, value] of rateLimitBuckets) {
+    if (now >= value.resetAt) rateLimitBuckets.delete(key)
+  }
+}, 60_000).unref()
 const notificationReadState = new Map()
 const dianpingProvider = createDianpingProvider({
   enabled: config.dianpingEnabled,
@@ -444,7 +451,7 @@ async function chatWithAgent(body = {}) {
           draft: body.draft || null,
           realtime: body.realtime || null,
           currentLocation: normalizeCurrentLocation(body.currentLocation),
-          recentMessages: body.messages || [],
+          recentMessages: (body.messages || []).slice(-10),
         }),
       },
     ], { maxTokens: 700 })
@@ -781,13 +788,14 @@ async function collectPoiCandidates(draft, warnings) {
     return []
   }
 
+  const settled = await Promise.allSettled(keywords.map((keyword) => searchAmapPois({ city, keyword })))
   const results = []
-  for (const keyword of keywords) {
-    try {
-      const pois = await searchAmapPois({ city, keyword })
-      results.push(...pois)
-    } catch (error) {
-      warnings.push(`AMap ${keyword}: ${externalWarning(error)}`)
+  for (let i = 0; i < settled.length; i++) {
+    const outcome = settled[i]
+    if (outcome.status === 'fulfilled') {
+      results.push(...outcome.value)
+    } else {
+      warnings.push(`AMap ${keywords[i]}: ${externalWarning(outcome.reason)}`)
     }
   }
 
@@ -1299,16 +1307,18 @@ async function queryAmapWeather(city) {
 }
 
 async function buildRealtimeRoute(items, city, warnings, logs) {
+  const pairs = []
+  for (let i = 0; i < items.length - 1; i++) {
+    pairs.push({ from: items[i], to: items[i + 1], mode: routeModeFromTransport(items[i + 1].transport || items[i].transport) })
+  }
+  const settled = await Promise.allSettled(pairs.map(({ from, to, mode }) => queryAmapRoute({ from, to, mode, city })))
   const legs = []
-  for (let index = 0; index < items.length - 1; index += 1) {
-    const from = items[index]
-    const to = items[index + 1]
-    const mode = routeModeFromTransport(to.transport || from.transport)
-    try {
-      const leg = await queryAmapRoute({ from, to, mode, city })
-      legs.push(leg)
-    } catch (error) {
-      warnings.push(`AMap route ${from.name}-${to.name}: ${externalWarning(error)}`)
+  for (let i = 0; i < settled.length; i++) {
+    const outcome = settled[i]
+    if (outcome.status === 'fulfilled') {
+      legs.push(outcome.value)
+    } else {
+      warnings.push(`AMap route ${pairs[i].from.name}-${pairs[i].to.name}: ${externalWarning(outcome.reason)}`)
     }
   }
 
@@ -1501,8 +1511,8 @@ async function buildRealtimeRecommendation({ trip, city, currentLocation, weathe
           city,
           currentLocation,
           weather,
-          route,
-          traffic,
+          route: summarizeRouteForLlm(route),
+          traffic: summarizeTrafficForLlm(traffic),
           events,
           unavailable: unavailableRealtimeFields(),
           outputSchema: {
@@ -1811,6 +1821,7 @@ async function callLlm(messages, options = {}) {
 
 function normalizePlans(plans, draft, candidates) {
   const source = Array.isArray(plans) && plans.length > 0 ? plans : fallbackPlans(draft, candidates)
+  const llmRecommendedType = source.find((p) => p?.recommended === true)?.type || null
   return PLAN_TYPES.map((type, index) => {
     const plan = source.find((p) => p?.type === type) || source[index] || {}
     const stops = normalizeStops(plan.stops, candidates)
@@ -1819,13 +1830,13 @@ function normalizePlans(plans, draft, candidates) {
       id: sanitizeId(plan.id || `agent-plan-${index + 1}`),
       type,
       name: normalizePlanName(plan.name, type, draft, draftDays),
-      recommended: index === 0,
+      recommended: llmRecommendedType ? type === llmRecommendedType : index === 0,
       days: draftDays,
       totalDuration: String(plan.totalDuration || `约 ${Math.max(6, draftDays * 7)} 小时`),
       budget: normalizeNumber(plan.budget, draft?.budget || 800),
       distance: normalizeNumber(plan.distance, 10 + index * 2),
       satisfaction: Math.min(100, Math.max(60, normalizeNumber(plan.satisfaction, 92 - index * 2))),
-      tags: normalizeStringArray(plan.tags).slice(0, 4),
+      tags: normalizeStringArray(plan.tags, ['AI 生成', '动线优化', '偏好匹配']).slice(0, 4),
       summary: String(plan.summary || defaultSummary(type, draft)),
       aiReason: String(plan.aiReason || defaultAiReason(type, draft)),
       stops,
@@ -2368,11 +2379,13 @@ function currentLlmProvider() {
 }
 
 function currentLlmApiKey() {
-  return config.llmProvider === 'longcat' ? config.longcatApiKey : config.deepseekApiKey
+  const { source } = currentLlmProvider()
+  return config[`${source}ApiKey`] || ''
 }
 
 function currentLlmBaseUrl() {
-  return config.llmProvider === 'longcat' ? config.longcatBaseUrl : config.deepseekBaseUrl
+  const { source } = currentLlmProvider()
+  return config[`${source}BaseUrl`] || ''
 }
 
 function isLlmConfigured() {
@@ -2459,8 +2472,8 @@ function uniqueBy(values, keyFn) {
   })
 }
 
-function normalizeStringArray(value) {
-  if (!Array.isArray(value)) return ['AI 生成', '动线优化', '偏好匹配']
+function normalizeStringArray(value, fallback = []) {
+  if (!Array.isArray(value)) return Array.isArray(fallback) ? fallback : []
   return value.map((item) => String(item)).filter(Boolean)
 }
 
@@ -2503,4 +2516,31 @@ function trimTrailingSlash(value) {
 
 function messageOf(error) {
   return error instanceof Error ? error.message : String(error)
+}
+
+function summarizeRouteForLlm(route) {
+  if (!route) return null
+  return {
+    distanceText: route.distanceText,
+    durationText: route.durationText,
+    congestionLegs: route.congestionLegs,
+    legs: (route.legs || []).map((leg) => ({
+      from: leg.from?.name,
+      to: leg.to?.name,
+      mode: leg.mode,
+      distanceText: leg.distanceText,
+      durationText: leg.durationText,
+      trafficStatus: leg.trafficStatus || null,
+    })),
+  }
+}
+
+function summarizeTrafficForLlm(traffic) {
+  if (!traffic) return null
+  return {
+    status: traffic.status,
+    description: traffic.description,
+    expedite: traffic.expedite,
+    congested: traffic.congested,
+  }
 }

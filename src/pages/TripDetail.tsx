@@ -29,7 +29,7 @@ import { useApp } from '../store/AppContext'
 import { buildTripFromPlan, isSelectedPlanTrip } from '../utils/tripBuilders'
 import { canNavigateTo, navigationModeFromTransport, openAmapNavigation } from '../utils/amapNavigation'
 import { exportTripMarkdown, shareOrCopy } from '../utils/browserActions'
-import type { ActivityStatus, ItineraryDay, ItineraryItem, Trip } from '../types'
+import type { ActivityStatus, ItineraryDay, ItineraryItem, Poi, Trip } from '../types'
 
 const dayColors = ['#2563eb', '#f59e0b', '#10b981', '#8b5cf6']
 
@@ -49,7 +49,7 @@ const statusTone: Record<ActivityStatus, 'green' | 'blue' | 'gray'> = {
 export default function TripDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { draft, selectedPlan, trips, updateItemStatus } = useApp()
+  const { draft, selectedPlan, trips, updateItemStatus, pois } = useApp()
   const selectedTrip = isSelectedPlanTrip(id, selectedPlan) && selectedPlan ? buildTripFromPlan(selectedPlan, draft) : null
   const found = trips.find((item) => item.id === (id ?? ''))
   const trip = selectedTrip ?? found ?? mainTrip
@@ -103,7 +103,7 @@ export default function TripDetail() {
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-[1280px] space-y-4 px-4 py-4 sm:px-5 lg:px-6 lg:py-6">
         <RoutePageHeader
-          eyebrow="Itinerary Detail"
+          eyebrow="行程详情"
           title={
             <span className="flex min-w-0 items-center gap-3">
               <button onClick={() => navigate(`/trip/${trip.id}`)} className="btn-ghost min-w-10 px-2 py-2" aria-label="返回行程总览">
@@ -116,31 +116,35 @@ export default function TripDetail() {
           meta={
             <>
               <Tag tone={trip.planType === '体验优先' ? 'purple' : trip.planType === '预算优先' ? 'green' : 'blue'}>{trip.planType}</Tag>
-              <StatusPill tone="brand">Day {activeDay}</StatusPill>
+              <StatusPill tone="brand">第 {activeDay} 天</StatusPill>
             </>
           }
           actions={
             <>
-            <div className="segmented-control">
-              <button
-                onClick={() => setView('map')}
-                className={`segmented-item ${view === 'map' ? 'segmented-item-active' : ''}`}
-                aria-label="切换到地图视图"
-                aria-pressed={view === 'map'}
-              >
-                <MapIcon size={15} /> 地图视图
+              <div className="segmented-control">
+                <button
+                  onClick={() => setView('map')}
+                  className={`segmented-item ${view === 'map' ? 'segmented-item-active' : ''}`}
+                  aria-label="切换到地图视图"
+                  aria-pressed={view === 'map'}
+                >
+                  <MapIcon size={15} /> 地图视图
+                </button>
+                <button
+                  onClick={() => setView('list')}
+                  className={`segmented-item ${view === 'list' ? 'segmented-item-active' : ''}`}
+                  aria-label="切换到列表视图"
+                  aria-pressed={view === 'list'}
+                >
+                  <List size={15} /> 列表视图
+                </button>
+              </div>
+              <button onClick={shareTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="分享行程">
+                <Share2 size={15} /> 分享
               </button>
-              <button
-                onClick={() => setView('list')}
-                className={`segmented-item ${view === 'list' ? 'segmented-item-active' : ''}`}
-                aria-label="切换到列表视图"
-                aria-pressed={view === 'list'}
-              >
-                <List size={15} /> 列表视图
+              <button onClick={exportTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="导出行程">
+                <Download size={15} /> 导出
               </button>
-            </div>
-            <button onClick={shareTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="分享行程"><Share2 size={15} /> 分享</button>
-            <button onClick={exportTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="导出行程"><Download size={15} /> 导出</button>
             </>
           }
         />
@@ -158,7 +162,7 @@ export default function TripDetail() {
               aria-label={`切换到第 ${d.day} 天`}
               aria-pressed={activeDay === d.day}
             >
-              Day {d.day} · {d.date.slice(5)}
+              第 {d.day} 天 · {d.date.slice(5)}
             </button>
           ))}
         </div>
@@ -176,6 +180,7 @@ export default function TripDetail() {
           <ListView
             trip={trip}
             activeDay={activeDay}
+            pois={pois}
             onItemStatusChange={isPersisted ? (itemId, status) => updateItemStatus(trip.id, itemId, status) : undefined}
             onNavigatePoi={(poiId) => navigate(`/poi/${poiId}`)}
             onShareTrip={shareTrip}
@@ -240,7 +245,7 @@ function MapView({
     <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[320px_1fr_260px]">
       {/* 左：当日时间轴 */}
       <Card className="max-h-[560px] overflow-y-auto p-4">
-        <p className="mb-3 text-sm font-semibold text-slate-800">Day {day.day} · {day.title}</p>
+        <p className="mb-3 text-sm font-semibold text-slate-800">第 {day.day} 天 · {day.title}</p>
         <ol className="relative space-y-4 border-l border-dashed border-slate-200 pl-5">
           {day.items.map((it) => {
             const TIcon = transportIcon[it.transport] ?? Bus
@@ -370,7 +375,7 @@ function MapView({
             {routeGroups.map((g, i) => (
               <div key={i} className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: g.color }} />
-                Day {i + 1}
+                第 {i + 1} 天
               </div>
             ))}
           </div>
@@ -393,6 +398,7 @@ const statusCycle: Record<ActivityStatus, ActivityStatus> = {
 function ListView({
   trip,
   activeDay,
+  pois,
   onItemStatusChange,
   onNavigatePoi,
   onShareTrip,
@@ -400,6 +406,7 @@ function ListView({
 }: {
   trip: Trip
   activeDay: number
+  pois?: Poi[]
   onItemStatusChange?: (itemId: string, status: ActivityStatus) => void
   onNavigatePoi?: (poiId: string) => void
   onShareTrip?: () => void
@@ -408,6 +415,7 @@ function ListView({
   const items = trip.itinerary
     .filter((day) => day.day === activeDay)
     .flatMap((day) => day.items.map((item) => ({ ...item, day: day.day })))
+  const poiMap = new Map(pois?.map((p) => [p.id, p]) ?? [])
   const totalCost = items.reduce((sum, item) => sum + item.cost, 0)
   const transportCost = Math.round(totalCost * 0.18)
   const ticketCost = Math.max(0, totalCost - transportCost)
@@ -427,11 +435,14 @@ function ListView({
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map((item) => {
+              const poi = item.poiId ? poiMap.get(item.poiId) : undefined
+              const rating = poi?.rating
+              return (
               <tr key={item.id} className="border-b border-slate-100 transition-colors hover:bg-slate-50">
                 <td className="px-4 py-3">
                   <span className="text-sm font-semibold text-slate-900">{item.time}</span>
-                  <p className="mt-0.5 text-xs text-slate-400">Day {item.day}</p>
+                  <p className="mt-0.5 text-xs text-slate-400">第 {item.day} 天</p>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
@@ -445,10 +456,14 @@ function ListView({
                 <td className="px-4 py-3 text-slate-600">{item.duration}</td>
                 <td className="px-4 py-3 text-slate-600">¥{item.cost}</td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-1">
-                    <Stars rating={4.7} size={11} />
-                    <span className="text-xs text-slate-500">4.7</span>
-                  </div>
+                  {rating != null ? (
+                    <div className="flex items-center gap-1">
+                      <Stars rating={rating} size={11} />
+                      <span className="text-xs text-slate-500">{rating.toFixed(1)}</span>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-300">—</span>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   {onItemStatusChange ? (
@@ -480,7 +495,8 @@ function ListView({
                   )}
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>

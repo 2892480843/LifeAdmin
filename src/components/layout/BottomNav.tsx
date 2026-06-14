@@ -19,23 +19,22 @@ export default function BottomNav() {
         <NavLink
           key={tab.to}
           to={tab.to}
-          className={({ isActive }) =>
-            `flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold transition-colors ${
-              isActive ? 'text-brand-600' : 'text-slate-400 hover:text-slate-700'
-            }`
-          }
+          className="flex flex-1 flex-col items-center py-1.5"
           aria-label={tab.label}
         >
           {({ isActive }) => (
-            <>
+            <span className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition-all ${
+              isActive
+                ? 'bg-brand-50 text-brand-600'
+                : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+            }`}>
               <tab.icon
-                size={22}
-                strokeWidth={isActive ? 2.5 : 2}
-                className={isActive ? 'text-brand-600' : ''}
+                size={21}
+                strokeWidth={isActive ? 2.5 : 1.8}
                 aria-hidden="true"
               />
               <span>{tab.label}</span>
-            </>
+            </span>
           )}
         </NavLink>
       ))}

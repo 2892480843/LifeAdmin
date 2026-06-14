@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Clock, ShieldCheck, Wallet } from 'lucide-react'
 import { Card, Slider, Tag, Toggle } from '../../components/ui'
 import { useApp } from '../../store/AppContext'
@@ -26,7 +25,6 @@ const rangeOptions = ['市区核心（<10km）', '近郊（10-30km）', '周边�
 
 export default function StepConstraints({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
   const { draft, updateDraft } = useApp()
-  const [childFriendly, setChildFriendly] = useState(false)
 
   const toggleTransport = (transport: string) =>
     updateDraft({
@@ -42,7 +40,7 @@ export default function StepConstraints({ onNext, onPrev }: { onNext: () => void
     { label: '景区需提前预约', desc: '优先提醒需要预约的景点安排', checked: draft.freeFirst, onChange: (value: boolean) => updateDraft({ freeFirst: value }) },
     { label: '可接受室内活动', desc: '天气变化时可以切换到室内备选', checked: draft.indoorFirst, onChange: (value: boolean) => updateDraft({ indoorFirst: value }) },
     { label: '无障碍通行需求', desc: '优先路线平缓、换乘更少的方案', checked: draft.accessibleFirst, onChange: (value: boolean) => updateDraft({ accessibleFirst: value }) },
-    { label: '儿童友好场所', desc: '优先亲子设施完善、节奏轻松的点位', checked: childFriendly, onChange: setChildFriendly },
+    { label: '儿童友好场所', desc: '优先亲子设施完善、节奏轻松的点位', checked: draft.childFriendly, onChange: (value: boolean) => updateDraft({ childFriendly: value }) },
   ]
 
   return (
@@ -50,7 +48,7 @@ export default function StepConstraints({ onNext, onPrev }: { onNext: () => void
       <div className="border-b border-slate-200/80 p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="section-eyebrow">Step 03</p>
+            <p className="section-eyebrow">步骤 03</p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">约束条件</h2>
             <p className="mt-1 text-sm text-slate-500">把预算、时间、交通与容忍度变成 AI 可执行的路线边界。</p>
           </div>

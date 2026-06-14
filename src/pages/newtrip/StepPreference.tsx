@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { Card, Tag } from '../../components/ui'
 import { useApp } from '../../store/AppContext'
@@ -27,7 +26,6 @@ const companionOptions = ['有小孩', '老人同行', '宠物友好', '无障�
 
 export default function StepPreference({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
   const { draft, updateDraft } = useApp()
-  const [specialNeeds, setSpecialNeeds] = useState('')
 
   const toggle = (key: 'interests' | 'cuisines', value: string) =>
     updateDraft({
@@ -47,7 +45,7 @@ export default function StepPreference({ onNext, onPrev }: { onNext: () => void;
       <div className="border-b border-slate-200/80 p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="section-eyebrow">Step 02</p>
+            <p className="section-eyebrow">步骤 02</p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">偏好设置</h2>
             <p className="mt-1 text-sm text-slate-500">用兴趣、餐饮和节奏偏好约束 AI 推荐，减少泛化路线。</p>
           </div>
@@ -182,8 +180,8 @@ export default function StepPreference({ onNext, onPrev }: { onNext: () => void;
             <label className="block">
               <span className="mb-2 block text-sm font-semibold text-slate-900">特殊需求</span>
               <textarea
-                value={specialNeeds}
-                onChange={(event) => setSpecialNeeds(event.target.value)}
+                value={draft.specialNeeds}
+                onChange={(event) => updateDraft({ specialNeeds: event.target.value })}
                 rows={3}
                 className="input min-h-24 resize-none"
                 placeholder="如：素食主义、轮椅可通行、避开吸烟区..."

@@ -239,7 +239,7 @@ export function Toast({
 
   const Icon = toastIconMap[tone]
   return (
-    <div className="fixed inset-x-4 top-20 z-50 mx-auto max-w-sm sm:left-auto sm:right-5 sm:mx-0" role="status" aria-live="polite" aria-atomic="true">
+    <div className="fixed inset-x-4 top-28 z-50 mx-auto max-w-sm sm:left-auto sm:right-5 sm:mx-0 lg:top-20" role="status" aria-live="polite" aria-atomic="true">
       <div className={`flex items-center gap-2 rounded-card border px-4 py-3 text-sm shadow-card ${toastToneMap[tone]}`}>
         <Icon size={16} aria-hidden="true" />
         <span className="min-w-0 flex-1">{message}</span>
@@ -293,7 +293,7 @@ export function Modal({
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm" onClick={onClose}>
       <div
         ref={dialogRef}
         role="dialog"
@@ -301,6 +301,7 @@ export function Modal({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={`command-surface max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-hidden ${className}`}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
           <h2 id={titleId} className="text-base font-semibold text-slate-800">{title}</h2>

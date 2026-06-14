@@ -111,7 +111,7 @@ export default function TripOverview() {
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-[1280px] space-y-5 px-4 py-4 sm:px-5 lg:px-6 lg:py-6">
         <RoutePageHeader
-          eyebrow="Route Overview"
+          eyebrow="路线总览"
           title={
             <span className="flex min-w-0 items-center gap-3">
               <button onClick={() => navigate(-1)} className="btn-ghost min-w-10 px-2 py-2" aria-label="返回上一页">
@@ -129,16 +129,22 @@ export default function TripOverview() {
           }
           actions={
             <>
-            {isUnsaved && (
-              <button onClick={saveTrip} className="btn-primary px-3 py-2 text-sm" aria-label="保存到我的行程">
-                <BookmarkPlus size={15} /> 保存行程
+              {isUnsaved && (
+                <button onClick={saveTrip} className="btn-primary px-3 py-2 text-sm" aria-label="保存到我的行程">
+                  <BookmarkPlus size={15} /> 保存行程
+                </button>
+              )}
+              <button onClick={shareTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="分享行程">
+                <Share2 size={15} /> 分享
               </button>
-            )}
-            <button onClick={shareTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="分享行程"><Share2 size={15} /> 分享</button>
-            <button onClick={exportTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="导出行程"><Download size={15} /> 导出</button>
-            {!isUnsaved && (
-              <button onClick={() => navigate(`/trip/${trip.id}/detail`)} className="btn-soft px-3 py-2 text-sm" aria-label="编辑行程"><Edit3 size={15} /> 编辑行程</button>
-            )}
+              <button onClick={exportTrip} className="btn-ghost px-3 py-2 text-sm" aria-label="导出行程">
+                <Download size={15} /> 导出
+              </button>
+              {!isUnsaved && (
+                <button onClick={() => navigate(`/trip/${trip.id}/detail`)} className="btn-soft px-3 py-2 text-sm" aria-label="编辑行程">
+                  <Edit3 size={15} /> 编辑行程
+                </button>
+              )}
             </>
           }
         />
@@ -151,7 +157,7 @@ export default function TripOverview() {
           </div>
           <div className="mt-4 border-t border-slate-100 pt-4">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-slate-900">关键 checkpoint</p>
+              <p className="text-sm font-semibold text-slate-900">关键检查点</p>
               <span className="text-xs text-slate-400">{trip.checkpoints.length} 个触发点</span>
             </div>
             <CheckpointStrip items={trip.checkpoints} />
@@ -200,7 +206,7 @@ export default function TripOverview() {
                     }`}
                     aria-pressed={activeDay === day.day}
                   >
-                    Day {day.day}
+                    第 {day.day} 天
                   </button>
                 ))}
               </div>
@@ -215,7 +221,7 @@ export default function TripOverview() {
                         D{day.day}
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-slate-800">Day {day.day} · {day.title}</p>
+                        <p className="text-sm font-semibold text-slate-800">第 {day.day} 天 · {day.title}</p>
                         <p className="text-xs text-slate-400">{day.date}</p>
                       </div>
                     </div>
@@ -254,7 +260,7 @@ export default function TripOverview() {
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                 {trip.itinerary.map((d, i) => (
                   <span key={d.day} className="flex items-center gap-1 text-slate-500">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dayColors[i % dayColors.length] }} /> Day {d.day}
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dayColors[i % dayColors.length] }} /> 第 {d.day} 天
                   </span>
                 ))}
               </div>

@@ -3,7 +3,7 @@ import type { User } from '../types'
 // 当前登录用户 mock 数据
 export const currentUser: User = {
   id: 'u-001',
-  name: 'Traveler_01',
+  name: '李明远',
   email: 'traveler01@example.com',
   phone: '138****6688',
   city: '上海',

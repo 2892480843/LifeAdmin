@@ -300,4 +300,6 @@ export interface TripDraft {
   freeFirst: boolean
   indoorFirst: boolean
   accessibleFirst: boolean
+  childFriendly: boolean
+  specialNeeds: string
 }

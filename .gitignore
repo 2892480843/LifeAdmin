@@ -18,3 +18,6 @@ pnpm-debug.log*
 agent-server.log
 agent-server.err.log
 *.pid
+
+# 运行时数据（审计日志、provider 快照），由应用运行时生成，不纳入版本控制
+data/runtime/

@@ -77,7 +77,7 @@ export default function Trips() {
     <AppLayout>
       <div className="page-shell max-w-[1280px]">
         <RoutePageHeader
-          eyebrow="Trips Workspace"
+          eyebrow="行程工作台"
           title="行程资产管理台"
           description="统一管理规划中、草稿、收藏和已完成路线。"
           meta={
@@ -215,7 +215,7 @@ export default function Trips() {
             className="p-4 sm:p-5 xl:sticky xl:top-24 xl:self-start"
           >
             <div className="mb-4">
-              <p className="section-eyebrow">Asset Control</p>
+              <p className="section-eyebrow">资产概况</p>
               <h2 className="mt-1 text-base font-semibold text-slate-950">资产态势</h2>
               <p className="mt-1 text-xs leading-5 text-slate-500">当前筛选：{tab} · 匹配 {list.length} 条记录</p>
             </div>
@@ -326,7 +326,7 @@ function TripAssetRow({
 
         <div className="flex flex-col justify-between border-t border-slate-100 p-4 lg:border-l lg:border-t-0">
           <div>
-            <p className="text-xs font-semibold uppercase text-slate-400">Next Action</p>
+            <p className="text-xs font-semibold uppercase text-slate-400">下一步操作</p>
             <p className="mt-1 text-sm font-semibold text-slate-800">{meta.action}</p>
             <p className="mt-1 text-xs leading-5 text-slate-500">{meta.desc}</p>
           </div>

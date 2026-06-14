@@ -89,7 +89,7 @@ export function RoutePageHeader({
   description,
   actions,
   meta,
-  status = 'Command Sync',
+  status = '已同步',
   statusTone = 'emerald',
 }: {
   eyebrow: string
@@ -391,7 +391,7 @@ export function RouteMiniMap({
     <div className={`${surfaceClass} route-scan-line relative overflow-hidden ${className}`}>
       <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-1.5">
         <span className="status-dot-live" />
-        <span className={`text-[10px] font-bold uppercase tracking-wider ${eyebrowClass}`}>Route Topology</span>
+        <span className={`text-[10px] font-bold uppercase tracking-wider ${eyebrowClass}`}>路线拓扑</span>
       </div>
       {showCompass && (
         <div className={`pointer-events-none absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border ${dark ? 'border-white/15 text-white/70' : 'border-slate-200/80 bg-white/70 text-slate-500'}`}>

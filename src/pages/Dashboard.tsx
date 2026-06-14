@@ -25,7 +25,7 @@ import type { MapMarker } from '../components/MapCanvas'
 import { Card, CitySelect, DatePicker, Stars, Tag } from '../components/ui'
 import SmartImage from '../components/ui/SmartImage'
 import { MetricTile, RouteNodeRail, StatusPill, SystemPanel } from '../components/ui/RouteSystem'
-import { cities, cityOptionGroups, getCity } from '../mock'
+import { cities, cityOptionGroups, getCity, weather } from '../mock'
 import { useApp } from '../store/AppContext'
 import type { Trip } from '../types'
 import { displayPlaceImage } from '../utils/poiImages'
@@ -55,7 +55,7 @@ export default function Dashboard() {
     time: item.time,
     label: item.name,
     meta: `${item.transport} · ${item.duration}`,
-    status: `D${item.day} · ${item.status}`,
+    status: `第${item.day}天 · ${item.status}`,
     color: item.color,
   }))
   const currentRouteMarkers: MapMarker[] = currentRouteItems.map((item, index) => ({
@@ -108,9 +108,13 @@ export default function Dashboard() {
               <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                 <div className="min-w-0">
                   <h1 className="text-xl font-semibold text-slate-950 sm:text-2xl">
-                    你好，{user?.name || 'Traveler'} 👋
+                    你好，{user?.name || '旅行者'} 👋
                   </h1>
-                  <p className="mt-1 text-sm text-slate-500">今天也是出发的好日子</p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {activeTrips.length > 0
+                      ? `共 ${activeTrips.length} 个行程正在进行`
+                      : '创建第一个智能行程，开始旅行规划'}
+                  </p>
                 </div>
                 <div className="dashboard-welcome-strip">
                   <WelcomeChip value={activeTrips.length} label="今日行程数" tone="text-brand-600" />
@@ -168,7 +172,7 @@ export default function Dashboard() {
                   <div className="dashboard-route-preview">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div className="min-w-0">
-                        <p className="section-eyebrow">Route Preview</p>
+                        <p className="section-eyebrow">路线预览</p>
                         <h3 className="mt-1 text-sm font-semibold text-slate-950">下一段路线节奏</h3>
                       </div>
                       <Link to={currentRouteHref} className="btn-ghost min-h-9 justify-center px-3 py-1.5 text-xs">
@@ -201,7 +205,7 @@ export default function Dashboard() {
                   <div className="min-w-0">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="section-eyebrow">Now</p>
+                        <p className="section-eyebrow">当前重点</p>
                         <h2 className="mt-1 text-base font-semibold text-slate-950">现在最该做什么</h2>
                       </div>
                       <ShieldAlert size={18} className="text-notice-600" aria-hidden="true" />
@@ -210,7 +214,9 @@ export default function Dashboard() {
                     <div className="mt-3 rounded-card border border-amber-200 bg-amber-50 p-3">
                       <p className="text-sm font-semibold text-amber-900">先检查晚高峰风险</p>
                       <p className="mt-1 text-sm leading-6 text-amber-800/80">
-                        陆家嘴与豫园片区可能影响当前节点衔接，建议在实时动态页确认拥堵和排队窗口。
+                        {featuredCity
+                          ? `${featuredCity.name}核心景区可能在高峰时段影响节点衔接，建议在实时动态页确认拥堵和排队窗口。`
+                          : '热门景区可能在高峰时段出现排队和拥堵，建议提前在实时动态页确认出行窗口。'}
                       </p>
                     </div>
                   </div>
@@ -227,7 +233,7 @@ export default function Dashboard() {
             <div className="border-t border-slate-200 bg-white px-4 py-2.5 sm:px-5">
               <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-center">
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase text-slate-400">Command Strip</p>
+                  <p className="text-xs font-semibold uppercase text-slate-400">主操作区</p>
                   <p className="mt-0.5 text-sm text-slate-600">主操作集中在这里，减少首屏分散注意力。</p>
                 </div>
                 <Link to="/new-trip" className="btn-primary min-h-10 justify-center px-4 py-2">
@@ -246,35 +252,17 @@ export default function Dashboard() {
           <SystemPanel accent="slate" showAccentRail={false} className="p-4 sm:p-5">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
-                <p className="section-eyebrow">AI Queue</p>
+                <p className="section-eyebrow">AI 建议</p>
                 <h2 className="mt-1 text-base font-semibold text-slate-950">AI 下一步建议</h2>
               </div>
               <Sparkles size={18} className="text-notice-600" aria-hidden="true" />
             </div>
             <div className="space-y-3">
-              <ActionItem icon={ShieldAlert} title="检查晚高峰风险" desc="陆家嘴与豫园片区建议错峰 30 分钟。" tone="risk" href="/realtime" />
+              <ActionItem icon={ShieldAlert} title="检查晚高峰风险" desc={`${featuredCity ? featuredCity.name + '核心景区' : '热门景区'}建议错峰，避开高峰时段。`} tone="risk" href="/realtime" />
               <ActionItem icon={Navigation} title="补齐导航目标" desc="为进行中节点确认交通方式与费用。" tone="brand" href={currentRouteHref} />
               <ActionItem icon={RefreshCw} title="同步偏好画像" desc="把最近收藏 POI 写入下一次推荐权重。" tone="locate" href="/settings?section=preference" />
             </div>
-            <div className="card mt-4 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="section-eyebrow">当前天气</p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-950">上海 · 25°C</p>
-                  <p className="text-sm text-slate-500">晴，适宜出行</p>
-                </div>
-                <div className="text-5xl" aria-hidden="true">☀️</div>
-              </div>
-              <div className="mt-4 grid grid-cols-4 gap-2 border-t border-slate-100 pt-3">
-                {['周一', '周二', '周三', '周四'].map((day) => (
-                  <div key={day} className="text-center">
-                    <p className="text-xs text-slate-400">{day}</p>
-                    <p className="my-1 text-lg" aria-hidden="true">⛅</p>
-                    <p className="text-xs font-semibold text-slate-600">28°</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <WeatherCard />
           </SystemPanel>
         </section>
 
@@ -325,8 +313,8 @@ export default function Dashboard() {
           <div className="grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
             <SystemPanel accent="brand" className="p-4 sm:p-5">
               <div className="mb-4">
-                <p className="section-eyebrow">Route Flow</p>
-                <h2 className="mt-1 text-base font-semibold text-slate-950">今日任务流</h2>
+                <p className="section-eyebrow">今日任务流</p>
+                <h2 className="mt-1 text-base font-semibold text-slate-950">今日路线节点</h2>
               </div>
               {currentNodes.length ? (
                 <RouteNodeRail nodes={currentNodes} activeId={activeNode?.id} />
@@ -341,7 +329,7 @@ export default function Dashboard() {
             <Card className="p-4 sm:p-5">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
-                  <p className="section-eyebrow">Recommended POI</p>
+                  <p className="section-eyebrow">推荐地点</p>
                   <h2 className="mt-1 text-base font-semibold text-slate-950">推荐地点资产</h2>
                 </div>
                 <Link to="/explore" className="btn-ghost px-3 py-2 text-sm">
@@ -396,7 +384,7 @@ export default function Dashboard() {
 
           <SystemPanel accent="emerald" className="p-4 sm:p-5">
             <div className="mb-4">
-              <p className="section-eyebrow">Live Summary</p>
+              <p className="section-eyebrow">实时摘要</p>
               <h2 className="mt-1 text-base font-semibold text-slate-950">实时状态摘要</h2>
             </div>
             <div className="grid gap-3">
@@ -543,6 +531,46 @@ function ActionItem({
   return (
     <div className="flex gap-3 rounded-card border border-slate-200 bg-white p-3">
       {inner}
+    </div>
+  )
+}
+
+const weatherIconEmoji: Record<string, string> = {
+  sun: '☀️',
+  'cloud-sun': '⛅',
+  cloud: '☁️',
+  'cloud-rain': '🌧️',
+  'cloud-lightning': '⛈️',
+  snow: '❄️',
+  wind: '💨',
+  fog: '🌫️',
+}
+
+function WeatherCard() {
+  const icon = weatherIconEmoji[weather.icon] ?? '🌤️'
+  const forecastDays = weather.forecast.slice(0, 4)
+  return (
+    <div className="card mt-4 p-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="section-eyebrow">当前天气</p>
+          <p className="mt-1 text-2xl font-semibold text-slate-950">{weather.city} · {weather.temp}°C</p>
+          <p className="text-sm text-slate-500">{weather.condition}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-4xl leading-none" aria-hidden="true">{icon}</div>
+          <p className="mt-1 text-xs text-slate-400">{weather.high}° / {weather.low}°</p>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-4 gap-2 border-t border-slate-100 pt-3">
+        {forecastDays.map((day) => (
+          <div key={day.day} className="text-center">
+            <p className="text-xs text-slate-400">{day.day}</p>
+            <p className="my-1 text-lg leading-none" aria-hidden="true">{weatherIconEmoji[day.icon] ?? '⛅'}</p>
+            <p className="text-xs font-semibold text-slate-600">{day.high}°</p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

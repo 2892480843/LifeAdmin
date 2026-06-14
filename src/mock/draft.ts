@@ -33,6 +33,8 @@ export function createDefaultDraft(): TripDraft {
     freeFirst: false,
     indoorFirst: false,
     accessibleFirst: false,
+    childFriendly: false,
+    specialNeeds: '',
   }
 }
 

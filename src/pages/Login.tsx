@@ -131,13 +131,13 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="relative text-xs text-white/50">© 2024 智行路线 · 让每一次出发更聪明</p>
+          <p className="relative text-xs text-white/50">© 2026 智行路线 · 让每一次出发更聪明</p>
         </section>
 
         <section className="flex min-h-[100dvh] items-center justify-center bg-white px-4 py-8 sm:px-6">
           <div className="w-full max-w-[400px]">
             <div className="mb-7">
-              <p className="section-eyebrow">ZhiXing Login</p>
+              <p className="section-eyebrow">账号登录</p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">进入智行路线</h2>
               <p className="mt-1 text-sm leading-6 text-slate-500">使用账号登录，管理你的旅行规划。</p>
             </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Bell,
@@ -35,6 +35,8 @@ export default function TopNav() {
   const [notices, setNotices] = useState<SystemNotification[]>([])
   const [noticeLoading, setNoticeLoading] = useState(false)
   const [noticeError, setNoticeError] = useState('')
+  const noticeRef = useRef<HTMLDivElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null)
 
   const isActive = (path: string) =>
     location.pathname === path || location.pathname.startsWith(path + '/')
@@ -64,6 +66,15 @@ export default function TopNav() {
     const timer = window.setInterval(() => void refreshNotifications(), 30_000)
     return () => window.clearInterval(timer)
   }, [refreshNotifications])
+
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (noticeRef.current && !noticeRef.current.contains(e.target as Node)) setNoticeOpen(false)
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false)
+    }
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
+  }, [])
 
   const noticeCountLabel = noticeLoading
     ? '同步中'
@@ -123,7 +134,7 @@ export default function TopNav() {
             <Search size={18} aria-hidden="true" />
           </Link>
 
-          <div className="relative">
+          <div className="relative" ref={noticeRef}>
             <button
               type="button"
               onClick={() => {
@@ -143,7 +154,7 @@ export default function TopNav() {
               {notices.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-risk-500" aria-hidden="true" />}
             </button>
             {noticeOpen && (
-              <div className="fixed left-4 right-4 top-[4.5rem] overflow-hidden rounded-card border border-slate-200 bg-white shadow-card-hover sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-80">
+              <div className="animate-dropdown fixed left-4 right-4 top-[4.5rem] overflow-hidden rounded-card border border-slate-200 bg-white shadow-card-hover sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-80">
                 <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                   <p className="text-sm font-semibold text-slate-800">通知</p>
                   <span className="rounded-full bg-risk-50 px-2 py-0.5 text-[11px] font-medium text-risk-600">{noticeCountLabel}</span>
@@ -184,7 +195,7 @@ export default function TopNav() {
             <CircleHelp size={18} aria-hidden="true" />
           </button>
 
-          <div className="relative">
+          <div className="relative" ref={profileRef}>
             <button
               type="button"
               onClick={() => {
@@ -202,10 +213,10 @@ export default function TopNav() {
                 className="h-8 w-8 rounded-full object-cover"
               />
               <span className="hidden max-w-28 truncate text-sm font-medium text-slate-700 md:block">{user?.name}</span>
-              <ChevronDown size={14} className="text-slate-400" aria-hidden="true" />
+              <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
             </button>
             {profileOpen && (
-              <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-card border border-slate-200 bg-white py-1 shadow-card-hover">
+              <div className="animate-dropdown absolute right-0 mt-2 w-44 overflow-hidden rounded-card border border-slate-200 bg-white py-1 shadow-card-hover">
                 <Link
                   to="/profile"
                   onClick={() => setProfileOpen(false)}

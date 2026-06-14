@@ -58,7 +58,7 @@ export default function StepBasic({ onNext }: { onNext: () => void }) {
       <div className="border-b border-slate-200/80 p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="section-eyebrow">Step 01</p>
+            <p className="section-eyebrow">步骤 01</p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">基础信息</h2>
             <p className="mt-1 text-sm text-slate-500">当前只需要确认旅行城市、日期、人数和行程任务，其他偏好留到下一步。</p>
           </div>

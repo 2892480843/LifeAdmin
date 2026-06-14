@@ -89,7 +89,7 @@ export default function Profile() {
     <AppLayout>
       <div className="page-shell max-w-[1280px] space-y-6">
         <RoutePageHeader
-          eyebrow="Preference Profile"
+          eyebrow="偏好画像"
           title="个人中心"
           description="聚合账户状态、旅行画像和近期路线资产，便于快速继续规划。"
           meta={
@@ -160,12 +160,12 @@ function ProfileHeroCard({
         <div className="pointer-events-none absolute -bottom-6 left-1/3 h-24 w-64 rounded-full bg-locate-300/20 blur-2xl" aria-hidden="true" />
         <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-5 text-white sm:left-44 lg:left-52">
           <div className="min-w-0 max-w-2xl">
-            <p className="text-xs font-semibold uppercase text-white/70">Traveler Command Center</p>
+            <p className="text-xs font-semibold uppercase text-white/70">旅行者指挥中心</p>
             <p className="mt-2 max-w-xl text-sm leading-6 text-white/85">偏好同步中，下一段路线将围绕「{topInterest}」展开。</p>
           </div>
           <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-xs font-medium backdrop-blur sm:inline-flex lg:px-4 lg:py-2 lg:text-sm">
             <Sparkles size={13} aria-hidden="true" />
-            AI Profile Ready
+            AI 画像就绪
           </span>
         </div>
       </div>
@@ -183,7 +183,7 @@ function ProfileHeroCard({
               />
               <div className="min-w-0 pt-14">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="truncate text-2xl font-semibold text-slate-950">{user?.name ?? 'Traveler'}</h2>
+                  <h2 className="truncate text-2xl font-semibold text-slate-950">{user?.name ?? '旅行者'}</h2>
                   <Tag tone="blue">{user?.level ?? '普通用户'}</Tag>
                 </div>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">{user?.bio || '热爱旅行，探索世界每个角落'}</p>
@@ -205,7 +205,7 @@ function ProfileHeroCard({
         <div className="self-end rounded-card border border-slate-200 bg-slate-50/80 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase text-slate-400">Route Persona</p>
+              <p className="text-xs font-semibold uppercase text-slate-400">路线画像</p>
               <p className="mt-1 text-sm font-semibold text-slate-800">{profile.pace}</p>
             </div>
             <span className="status-dot-live" />
@@ -239,8 +239,8 @@ function PreferenceInsightPanel({ profile, pois }: { profile: DerivedProfile; po
       <div className="grid gap-4 lg:grid-cols-[19rem_minmax(0,1fr)]">
         <div className="rounded-card border border-slate-200/80 bg-white/90 p-4">
           <div className="mb-2 flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-slate-800">Preference Radar</h4>
-            <span className="rounded-full bg-brand-50 px-2 py-1 text-[11px] font-semibold text-brand-700">Top 6</span>
+            <h4 className="text-sm font-semibold text-slate-800">偏好雷达</h4>
+            <span className="rounded-full bg-brand-50 px-2 py-1 text-[11px] font-semibold text-brand-700">前 6 项</span>
           </div>
           <PreferenceRadar items={profile.interests.slice(0, 6)} />
         </div>
@@ -397,7 +397,7 @@ function TravelPersonaCard({ profile }: { profile: DerivedProfile }) {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(96,165,250,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(45,212,191,.1)_1px,transparent_1px)] bg-[size:28px_28px] opacity-70" />
       <div className="relative">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase text-white/55">Travel DNA</p>
+          <p className="text-xs font-semibold uppercase text-white/55">旅行基因</p>
           <span className="status-dot-live" />
         </div>
         <h3 className="mt-3 text-lg font-semibold">{profile.interests.slice(0, 2).map((item) => item.label).join(' + ')}</h3>

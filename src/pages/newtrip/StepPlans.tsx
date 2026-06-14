@@ -55,7 +55,7 @@ export default function StepPlans({ plans }: { plans?: RoutePlan[] }) {
       <div className="command-surface px-4 py-3 sm:px-5">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="min-w-0">
-            <p className="section-eyebrow">Plan Comparison</p>
+            <p className="section-eyebrow">方案对比</p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">推荐方案对比</h2>
             <p className="mt-1 text-sm text-slate-500">选择一个策略，右侧会同步展示节点、预算和推荐依据。</p>
           </div>

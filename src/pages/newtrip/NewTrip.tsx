@@ -52,7 +52,7 @@ export default function NewTrip() {
     <AppLayout>
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-4 sm:px-5 lg:px-6 lg:py-5">
         <RoutePageHeader
-          eyebrow="Trip Builder"
+          eyebrow="行程创建"
           title="新建智能路线"
           description="每一步只处理当前必要信息，生成前再统一读取偏好、预算和约束。"
           meta={
@@ -64,7 +64,7 @@ export default function NewTrip() {
         />
 
         <div className="sticky top-[7.25rem] z-20 lg:top-[4.5rem]">
-          <StepIndicator current={Math.min(step, 3)} />
+          <StepIndicator current={step} />
         </div>
 
         <MobileDraftSummary draft={draft} completeness={completeness} />
@@ -99,7 +99,7 @@ function MobileDraftSummary({
     <details className="command-surface group 2xl:hidden">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase text-slate-400">Draft Summary</p>
+          <p className="text-xs font-semibold uppercase text-slate-400">草稿摘要</p>
           <p className="mt-1 truncate text-sm font-semibold text-slate-900">
             {draft.cityName || '未设置旅行城市'} · {draft.days} 天 · ¥{draft.budget}
           </p>
@@ -121,7 +121,7 @@ function DraftSummaryPanel({ draft, step }: { draft: TripDraft; step: number }) 
     <SystemPanel accent={step === 4 ? 'emerald' : 'brand'} showAccentRail={false} className="p-4 sm:p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <p className="section-eyebrow">Draft Summary</p>
+          <p className="section-eyebrow">草稿摘要</p>
           <h2 className="mt-1 text-base font-semibold text-slate-950">行程草稿摘要</h2>
         </div>
         <Sparkles size={18} className="text-brand-600" aria-hidden="true" />
@@ -168,7 +168,7 @@ function PlanningSignals({ draft }: { draft: TripDraft }) {
   return (
     <SystemPanel accent="amber" className="p-4 sm:p-5">
       <div className="mb-4">
-        <p className="section-eyebrow">Planning Signals</p>
+        <p className="section-eyebrow">AI 读取信号</p>
         <h2 className="mt-1 text-base font-semibold text-slate-950">AI 会重点读取</h2>
       </div>
       <div className="space-y-3">
