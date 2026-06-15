@@ -1559,7 +1559,7 @@ async function buildRealtimeRecommendation({ trip, city, currentLocation, weathe
           instruction: '只输出符合 schema 的 JSON。summary 必须简洁，risks 和 actions 只能基于实时接口、trip 和 currentLocation，不得补充未返回的数据。',
         }),
       },
-    ], { json: true, maxTokens: 700 })
+    ], { json: true, maxTokens: 2000 })
     const verifiedFieldNames = new Set([
       weather ? 'weather' : '',
       route ? 'route' : '',
@@ -1701,14 +1701,25 @@ function hasPoint(point) {
   return Number.isFinite(Number(point?.lng)) && Number.isFinite(Number(point?.lat))
 }
 
+// Equirectangular projection: lng/lat to normalized 0-100 grid.
+// Frontend re-projects via local bounding box for display, but backend
+// must return geographically-correct x,y instead of placeholder 50,50.
+function lngLatToXY(lng, lat) {
+  return {
+    x: Number(((lng + 180) / 360 * 100).toFixed(4)),
+    y: Number(((90 - lat) / 180 * 100).toFixed(4)),
+  }
+}
+
 function pointSummary(point) {
+  const projected = lngLatToXY(Number(point.lng), Number(point.lat))
   return {
     id: point.id || point.poiId || point.name || '',
     name: point.name || '',
     lng: Number(point.lng),
     lat: Number(point.lat),
-    x: normalizeNumber(point.x, 50),
-    y: normalizeNumber(point.y, 50),
+    x: projected.x,
+    y: projected.y,
     color: point.color || '#2563eb',
   }
 }
@@ -1728,7 +1739,8 @@ function parsePolyline(value) {
     .split(';')
     .map((item) => {
       const [lng, lat] = item.split(',').map(Number)
-      return Number.isFinite(lng) && Number.isFinite(lat) ? { lng, lat, x: 50, y: 50 } : null
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null
+      return { lng, lat, ...lngLatToXY(lng, lat) }
     })
     .filter(Boolean)
 }

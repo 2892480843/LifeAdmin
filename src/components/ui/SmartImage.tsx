@@ -63,7 +63,7 @@ export default function SmartImage({
           className={`absolute inset-0 flex items-center justify-center ${
             error
               ? 'bg-gradient-to-br from-brand-400 to-brand-600 text-white'
-              : 'animate-pulse bg-gradient-to-br from-slate-100 via-slate-50 to-brand-50 text-slate-300'
+            : 'bg-gradient-to-br from-slate-100 via-slate-50 to-brand-50 text-slate-300'
           }`}
         >
           <span className="px-2 text-center text-sm font-semibold opacity-90">{fallbackText ?? alt.slice(0, 2)}</span>

@@ -203,8 +203,8 @@ export default function MobileRealtime() {
           )}
         </section>
 
-        {/* AI 助手入口 */}
-        <Link to="/realtime" className="touch-press mt-6 flex items-center gap-3 rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-locate-50 p-4">
+       {/* AI 助手入口 */}
+        <Link to="/mobile/realtime" className="touch-press mt-6 flex items-center gap-3 rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-locate-50 p-4">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
             <Bot size={18} aria-hidden="true" />
           </span>

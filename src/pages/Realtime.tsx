@@ -288,29 +288,37 @@ export default function Realtime() {
     return () => window.clearInterval(timer)
   }, [activeTrip, autoRefreshEnabled, nextRefreshAt, loadRealtime])
 
-  const currentLocationDisplayPoint = useMemo(() => {
-    return currentLocation ? deriveCurrentLocationDisplayPoint(currentLocation, visibleItems) : null
-  }, [currentLocation, visibleItems])
+  const routeLegs = snapshot?.route?.legs ?? null
+
+  // Single shared projection: POI markers, current location, and every polyline
+  // vertex are projected from lng/lat through the same local bounding box so they
+  // align correctly on the SVG fallback map (AMap uses lng/lat directly).
+  const projection = useMemo<Projector>(() => {
+    return createProjection(collectGeoPoints(visibleItems, currentLocation, routeLegs))
+  }, [visibleItems, currentLocation, routeLegs])
 
   const markers = useMemo(() => {
-    const itemMarkers: MapMarker[] = visibleItems.map((item, index) => ({
-      id: item.id,
-      x: item.x,
-      y: item.y,
-      lng: item.lng,
-      lat: item.lat,
-      label: item.name,
-      color: item.color,
-      order: index + 1,
-      active: item.status === '进行中',
-    }))
+    const itemMarkers: MapMarker[] = visibleItems.map((item, index) => {
+      const { x, y } = projection.project(item.lng, item.lat)
+      return {
+        id: item.id,
+        x,
+        y,
+        lng: item.lng,
+        lat: item.lat,
+        label: item.name,
+        color: item.color,
+        order: index + 1,
+        active: item.status === '进行中',
+      }
+    })
 
     if (currentLocation) {
-      const point = currentLocationDisplayPoint ?? { x: 50, y: 50 }
+      const { x, y } = projection.project(currentLocation.lng, currentLocation.lat)
       itemMarkers.push({
         id: 'current-location',
-        x: point.x,
-        y: point.y,
+        x,
+        y,
         lng: currentLocation.lng,
         lat: currentLocation.lat,
         label: '当前位置',
@@ -320,17 +328,20 @@ export default function Realtime() {
     }
 
     return itemMarkers
-  }, [currentLocation, currentLocationDisplayPoint, visibleItems])
+  }, [currentLocation, projection, visibleItems])
 
   const routeGroups = useMemo<RouteGroup[]>(() => {
     if (snapshot?.route?.legs?.length) {
       return snapshot.route.legs.map((leg) => ({
         color: leg.trafficStatus && leg.trafficStatus !== '畅通' ? '#f97316' : '#2563eb',
-        points: normalizeLegPolyline(leg, currentLocationDisplayPoint),
+        points: leg.polyline.map((p) => ({ ...projection.project(p.lng, p.lat), lng: p.lng, lat: p.lat })),
       }))
     }
-    return [{ color: '#94a3b8', points: visibleItems.map((item) => toMapPoint(item)) }]
-  }, [currentLocationDisplayPoint, snapshot, visibleItems])
+    return [{
+      color: '#94a3b8',
+      points: visibleItems.map((item) => ({ ...projection.project(item.lng, item.lat), lng: item.lng, lat: item.lat })),
+    }]
+  }, [projection, snapshot, visibleItems])
 
   const send = async () => {
     if (!input.trim() || sending || !activeTrip) return
@@ -775,47 +786,59 @@ function pickActiveDay(trip: Trip | null): ItineraryDay | null {
     null
 }
 
-function toMapPoint(item: ItineraryItem) {
-  return { x: item.x, y: item.y, lng: item.lng, lat: item.lat }
-}
+type GeoPoint = { lng: number; lat: number }
+type Projector = { project: (lng: number, lat: number) => { x: number; y: number } }
 
-function normalizeLegPolyline(leg: RealtimeRouteLeg, currentLocationDisplayPoint: { x: number; y: number } | null) {
-  const points = leg.polyline.length > 1 ? leg.polyline : [leg.from, leg.to]
-  const fromX = leg.from.id === 'current-location' && currentLocationDisplayPoint ? currentLocationDisplayPoint.x : leg.from.x ?? 50
-  const fromY = leg.from.id === 'current-location' && currentLocationDisplayPoint ? currentLocationDisplayPoint.y : leg.from.y ?? 50
-
-  return points.map((point, index) => {
-    const ratio = points.length > 1 ? index / (points.length - 1) : 0
-    return {
-      x: interpolate(fromX, leg.to.x ?? 50, ratio),
-      y: interpolate(fromY, leg.to.y ?? 50, ratio),
-      lng: point.lng,
-      lat: point.lat,
+// Collect all geographic points visible on the map: POI items, current location,
+// and every polyline vertex from the route response.
+function collectGeoPoints(items: ItineraryItem[], currentLocation: CurrentLocation | null, routeLegs: RealtimeRouteLeg[] | null): GeoPoint[] {
+  const points: GeoPoint[] = []
+  for (const item of items) {
+    if (Number.isFinite(item.lng) && Number.isFinite(item.lat)) {
+      points.push({ lng: item.lng, lat: item.lat })
     }
-  })
+  }
+  if (currentLocation && Number.isFinite(currentLocation.lng) && Number.isFinite(currentLocation.lat)) {
+    points.push({ lng: currentLocation.lng, lat: currentLocation.lat })
+  }
+  if (routeLegs) {
+    for (const leg of routeLegs) {
+      for (const p of leg.polyline) {
+        if (Number.isFinite(p.lng) && Number.isFinite(p.lat)) {
+          points.push({ lng: p.lng, lat: p.lat })
+        }
+      }
+    }
+  }
+  return points
 }
 
-function deriveCurrentLocationDisplayPoint(location: CurrentLocation, items: ItineraryItem[]) {
-  const geoItems = items.filter((item) => Number.isFinite(item.lng) && Number.isFinite(item.lat))
-  if (geoItems.length === 0) return { x: 50, y: 50 }
+// Build a single local bounding-box projection shared by markers, current
+// location, and every polyline so they render in the same coordinate space.
+function createProjection(points: GeoPoint[]): Projector {
+  if (points.length === 0) return { project: () => ({ x: 50, y: 50 }) }
 
-  const lngs = [location.lng, ...geoItems.map((item) => item.lng)]
-  const lats = [location.lat, ...geoItems.map((item) => item.lat)]
+  const lngs = points.map((p) => p.lng)
+  const lats = points.map((p) => p.lat)
   const minLng = Math.min(...lngs)
   const maxLng = Math.max(...lngs)
   const minLat = Math.min(...lats)
   const maxLat = Math.max(...lats)
+
+  // All points coincide — center the dot
+  if (maxLng - minLng < 0.0001 && maxLat - minLat < 0.0001) {
+    return { project: () => ({ x: 50, y: 50 }) }
+  }
+
   const lngSpan = Math.max(maxLng - minLng, 0.0001)
   const latSpan = Math.max(maxLat - minLat, 0.0001)
 
   return {
-    x: clamp(10 + ((location.lng - minLng) / lngSpan) * 80, 8, 92),
-    y: clamp(90 - ((location.lat - minLat) / latSpan) * 80, 8, 92),
+    project: (lng: number, lat: number) => ({
+      x: clamp(10 + ((lng - minLng) / lngSpan) * 80, 5, 95),
+      y: clamp(90 - ((lat - minLat) / latSpan) * 80, 5, 95),
+    }),
   }
-}
-
-function interpolate(start: number, end: number, ratio: number) {
-  return start + (end - start) * ratio
 }
 
 function clamp(value: number, min: number, max: number) {

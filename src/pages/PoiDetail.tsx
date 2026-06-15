@@ -28,6 +28,7 @@ import { canNavigateTo, openAmapNavigation } from '../utils/amapNavigation'
 import { shareOrCopy } from '../utils/browserActions'
 import { displayPlaceImage, hasPendingPlaceImageReview } from '../utils/poiImages'
 import { canAddPoiToTrip, getPoiJoinCandidates, isPoiInTrip } from '../utils/tripMutations'
+import { mobileOrDesktopPath } from '../utils/useIsMobile'
 import { fetchDianpingPoiDetail, fetchDianpingQueue } from '../services/dianpingService'
 import type { DianpingPoiDetailResult, DianpingQueueResult, DianpingQueueValue } from '../services/dianpingService'
 
@@ -169,14 +170,14 @@ export default function PoiDetail() {
     <AppLayout sidebar={false}>
       <div className="mx-auto w-full max-w-[1400px] px-4 pb-20 pt-4 sm:px-5 md:pb-10 lg:px-6 lg:pt-5">
         <nav aria-label="页面位置" className="mb-3 flex items-center gap-2 text-xs font-medium text-slate-500">
-          <button
-            type="button"
-            onClick={() => navigate('/explore')}
-            className="rounded px-1 py-1 text-slate-500 transition-colors hover:text-brand-700"
-            aria-label="返回探索页"
-          >
-            探索
-          </button>
+         <button
+           type="button"
+           onClick={() => navigate(mobileOrDesktopPath('/mobile/explore', '/explore'))}
+           className="rounded px-1 py-1 text-slate-500 transition-colors hover:text-brand-700"
+           aria-label="返回探索页"
+         >
+           探索
+         </button>
           <span className="text-slate-300">/</span>
           <span>景点</span>
           <span className="text-slate-300">/</span>

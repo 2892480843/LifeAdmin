@@ -204,9 +204,9 @@ function PoiCard({
   fav: boolean
   onToggleFav: () => void
 }) {
-  return (
-    <div className="touch-press overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-      <Link to={`/poi/${poi.id}`} className="card-interactive block" aria-label={`查看景点：${poi.name}`}>
+ return (
+  <div className="touch-press relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <Link to={`/poi/${poi.id}`} className="card-interactive block" aria-label={`查看景点：${poi.name}`}>
         <div className="relative aspect-[4/3] w-full">
           <SmartImage
             src={displayPlaceImage(poi.cover, poi.imageConfidence)}

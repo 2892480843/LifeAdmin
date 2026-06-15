@@ -52,6 +52,51 @@ function markerContent(m: MapMarker, compactLabels: boolean): string {
   return `<div style="display:flex;flex-direction:column;align-items:center;transform:translateY(2px);">${dot}${label}</div>`
 }
 
+// 单段驾车路线规划：返回真实道路折线坐标 [lng,lat][]，失败时回退为两点直线
+function planDrivingSegment(
+  AMap: any,
+  from: [number, number],
+  to: [number, number],
+): Promise<[number, number][]> {
+  return new Promise((resolve) => {
+    try {
+      // 独立的 Driving 实例，关闭其自带覆盖物与自动视野，避免污染主地图
+      const driving = new AMap.Driving({
+        policy: AMap.DrivingPolicy.LEAST_DISTANCE,
+        hideMarkers: true,
+        showTraffic: false,
+        autoFitView: false,
+        ferryInclude: 0,
+      })
+      driving.search(
+        new AMap.LngLat(from[0], from[1]),
+        new AMap.LngLat(to[0], to[1]),
+        (status: string, result: any) => {
+          if (status !== 'complete' || !result || !result.routes || !result.routes.length) {
+            resolve([from, to])
+            return
+          }
+          // 拼接每段 step 的 path，得到完整真实道路折线
+          const path: [number, number][] = []
+          result.routes[0].steps.forEach((step: any) => {
+            const p = step.path || []
+            p.forEach((pt: any) => {
+              if (pt && typeof pt.lng === 'number' && typeof pt.lat === 'number') {
+                path.push([pt.lng, pt.lat])
+              } else if (Array.isArray(pt)) {
+                path.push([pt[0], pt[1]])
+              }
+            })
+          })
+          resolve(path.length >= 2 ? path : [from, to])
+        },
+      )
+    } catch {
+      resolve([from, to])
+    }
+  })
+}
+
 // 高德地图渲染（真实底图）。失败时通过 onError 交由上层回退。
 export default function AMapCanvas({
   markers,
@@ -96,7 +141,7 @@ export default function AMapCanvas({
     load({
       key,
       version: '2.0',
-      plugins: ['AMap.ToolBar', 'AMap.Scale'],
+      plugins: ['AMap.ToolBar', 'AMap.Scale', 'AMap.Driving'],
     })
       .then((AMap: any) => {
         if (destroyed || !containerRef.current) return
@@ -203,54 +248,96 @@ export default function AMapCanvas({
       overlays.push(marker)
     })
 
+    // 收集需要绘制路线的分组：routeGroups 优先，否则按 showRoute 把有序标记合成单组
+    const routeSegments: { color: string; points: [number, number][] }[] = []
     if (routeGroups && routeGroups.length > 0) {
       routeGroups.forEach((g) => {
-        const path = g.points.filter(hasLngLat).map((p) => [p.lng, p.lat])
-        if (path.length > 1) {
-          overlays.push(
-            new AMap.Polyline({
-              path,
-              strokeColor: g.color,
-              strokeWeight: 5,
-              strokeOpacity: 0.9,
-              lineJoin: 'round',
-              lineCap: 'round',
-              showDir: true,
-            }),
-          )
-        }
+        const points = g.points.filter(hasLngLat).map((p) => [p.lng, p.lat] as [number, number])
+        if (points.length > 1) routeSegments.push({ color: g.color, points })
       })
     } else if (showRoute) {
-      const path = [...markers]
+      const points = [...markers]
         .filter(hasLngLat)
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-        .map((m) => [m.lng, m.lat])
-      if (path.length > 1) {
-        overlays.push(
-          new AMap.Polyline({
-            path,
-            strokeColor: '#2563eb',
-            strokeWeight: 5,
-            strokeOpacity: 0.9,
-            strokeStyle: 'dashed',
-            lineJoin: 'round',
-            lineCap: 'round',
-            showDir: true,
-          }),
-        )
-      }
+        .map((m) => [m.lng, m.lat] as [number, number])
+      if (points.length > 1) routeSegments.push({ color: '#2563eb', points })
     }
+
+    // 先用直线占位，保证路线即时可见；真实道路轨迹异步返回后再替换
+    const placeholderPolylines: any[] = []
+    routeSegments.forEach((seg) => {
+      const line = new AMap.Polyline({
+        path: seg.points,
+        strokeColor: seg.color,
+        strokeWeight: 5,
+        strokeOpacity: 0.85,
+        strokeStyle: 'dashed',
+        lineJoin: 'round',
+        lineCap: 'round',
+        showDir: true,
+      })
+      overlays.push(line)
+      placeholderPolylines.push(line)
+    })
 
     if (overlays.length > 0) {
       map.add(overlays)
       map.setFitView(overlays, false, [40, 40, 40, 40])
       overlaysRef.current = overlays
     }
+
+    // 异步逐段规划真实驾车道路轨迹，成功后用真实折线替换占位直线
+    let cancelled = false
+    if (routeSegments.length > 0) {
+      Promise.all(
+        routeSegments.map(async (seg) => {
+          const realPath: [number, number][] = []
+          for (let i = 0; i < seg.points.length - 1; i += 1) {
+            const segPath = await planDrivingSegment(AMap, seg.points[i], seg.points[i + 1])
+            // 去重相邻段首尾重复点，避免折线节点叠加
+            if (realPath.length > 0 && segPath.length > 1) realPath.push(...segPath.slice(1))
+            else realPath.push(...segPath)
+          }
+          return { color: seg.color, path: realPath }
+        }),
+      ).then((results) => {
+        // 标记/路线变化或组件卸载后，丢弃过期结果，避免污染当前覆盖物
+        const liveMap = mapRef.current
+        if (cancelled || !liveMap) return
+        const realOverlays = results.map(
+          (r) =>
+            new AMap.Polyline({
+              path: r.path,
+              strokeColor: r.color,
+              strokeWeight: 5,
+              strokeOpacity: 0.9,
+              lineJoin: 'round',
+              lineCap: 'round',
+              showDir: true,
+            }),
+        )
+        // 移除占位直线，加入真实折线
+        liveMap.remove(placeholderPolylines)
+        liveMap.add(realOverlays)
+        overlaysRef.current = overlaysRef.current
+          .filter((o) => !placeholderPolylines.includes(o))
+          .concat(realOverlays)
+        // 以标记 + 真实折线重新适配视野
+        try {
+          liveMap.setFitView(overlaysRef.current, false, [40, 40, 40, 40])
+        } catch {
+          // ignore fit errors
+        }
+        resizeMap()
+      })
+    }
+
     resizeMap()
     const frame = window.requestAnimationFrame(resizeMap)
     const timer = window.setTimeout(resizeMap, 120)
     // 无覆盖物时保持当前视野，避免空结果时跳回全国
     return () => {
+      cancelled = true
       window.cancelAnimationFrame(frame)
       window.clearTimeout(timer)
     }

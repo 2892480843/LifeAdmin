@@ -15,6 +15,7 @@ import SmartImage from '../ui/SmartImage'
 import { Modal, Toast } from '../ui'
 import { fetchSystemNotifications, markSystemNotificationRead } from '../../services/notificationService'
 import type { SystemNotification } from '../../services/notificationService'
+import { useIsMobile } from '../../utils/useIsMobile'
 
 const navItems = [
   { label: '首页', path: '/dashboard' },
@@ -27,8 +28,9 @@ const navItems = [
 export default function TopNav() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, logout, trips } = useApp()
-  const [noticeOpen, setNoticeOpen] = useState(false)
+ const { user, logout, trips } = useApp()
+  const isMobile = useIsMobile()
+ const [noticeOpen, setNoticeOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [toast, setToast] = useState('')
@@ -130,7 +132,7 @@ export default function TopNav() {
         </div>
 
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-          <Link to="/explore?focus=search" aria-label="搜索目的地、景点或行程" className="os-icon-button" title="搜索">
+          <Link to={isMobile ? '/mobile/explore' : '/explore?focus=search'} aria-label="搜索目的地、景点或行程" className="os-icon-button" title="搜索">
             <Search size={18} aria-hidden="true" />
           </Link>
 
