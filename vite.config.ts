@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     port: 5173,
     open: false,
+    // 监听所有网络接口（IPv4 + IPv6），避免部分环境 localhost 仅解析到 IPv6(::1) 而 IPv4(127.0.0.1) 无法访问的问题
+    host: true,
   },
   build: {
     // POI 区域数据文件本身体积较大，上调阈值避免误报
