@@ -1446,17 +1446,18 @@ async function queryAmapTrafficCircle(point) {
   url.searchParams.set('extensions', 'all')
   url.searchParams.set('output', 'JSON')
 
-  const data = await fetchAmapJson(url, 2 * 60_000)
-  const trafficInfo = data.trafficinfo || {}
-  const evaluation = trafficInfo.evaluation || {}
-  const roads = Array.isArray(trafficInfo.roads) ? trafficInfo.roads : []
-  return {
-   status: normalizeTrafficStatusCode(evaluation.status || ''),
-   description: evaluation.description || '',
-   expedite: evaluation.expedite || '',
-   congested: evaluation.congested || '',
-   blocked: evaluation.blocked || '',
-   unknown: evaluation.unknown || '',
+ const data = await fetchAmapJson(url, 2 * 60_000)
+ const trafficInfo = data.trafficinfo || {}
+ const evaluation = trafficInfo.evaluation || {}
+ const roads = Array.isArray(trafficInfo.roads) ? trafficInfo.roads : []
+ const statusText = normalizeTrafficStatusCode(evaluation.status || '')
+ return {
+  status: statusText,
+  description: buildTrafficDescription(statusText, evaluation),
+  expedite: evaluation.expedite || '',
+  congested: evaluation.congested || '',
+  blocked: evaluation.blocked || '',
+  unknown: evaluation.unknown || '',
    roads: roads.slice(0, 8).map((road) => ({
      name: road.name || '',
      status: normalizeTrafficStatusCode(road.status || ''),
@@ -1472,6 +1473,19 @@ function normalizeTrafficStatusCode(value) {
   const code = String(value || '').trim()
   const map = { '0': '未知', '1': '畅通', '2': '缓行', '3': '拥堵', '4': '严重拥堵' }
   return map[code] || code
+}
+
+// Generate a description consistent with the normalized status and include
+// real congestion percentages from the AMap evaluation.
+function buildTrafficDescription(status, evaluation) {
+  const expedite = evaluation.expedite || '0%'
+  const congested = evaluation.congested || '0%'
+  const blocked = evaluation.blocked || '0%'
+  if (status === '严重拥堵') return `严重拥堵（拥堵 ${congested}，严重拥堵 ${blocked}）`
+  if (status === '拥堵') return `拥堵（拥堵路段占比 ${congested}）`
+  if (status === '缓行') return `缓行（拥堵路段占比 ${congested}，畅通 ${expedite}）`
+  if (status === '畅通') return `畅通（畅通路段占比 ${expedite}）`
+  return evaluation.description || '路况未知'
 }
 
 function buildRealtimeEvents({ weather, route, traffic }) {
@@ -1757,7 +1771,9 @@ function uniquePolylinePoints(points) {
 }
 
 function summarizeRouteTraffic(tmcs) {
-  const statuses = tmcs.map((tmc) => String(tmc.status || '')).filter(Boolean)
+  const statuses = tmcs
+    .map((tmc) => normalizeTrafficStatusCode(tmc.status))
+    .filter((status) => status && status !== '未知')
   if (statuses.some((status) => status.includes('严重'))) return { status: '严重拥堵', description: '路径规划返回部分路段严重拥堵。' }
   if (statuses.some((status) => status.includes('拥堵'))) return { status: '拥堵', description: '路径规划返回部分路段拥堵。' }
   if (statuses.some((status) => status.includes('缓行'))) return { status: '缓行', description: '路径规划返回部分路段缓行。' }
